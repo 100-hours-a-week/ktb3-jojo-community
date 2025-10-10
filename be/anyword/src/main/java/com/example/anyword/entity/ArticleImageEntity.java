@@ -1,9 +1,9 @@
-package com.example.anyword.dto;
+package com.example.anyword.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
-public class ArticleImageDTO implements BaseDTO<Long> {
+public class ArticleImageEntity implements BaseEntity<Long> {
   private Long id; //PK
 
   private final Long articleId; //FK
@@ -12,7 +12,7 @@ public class ArticleImageDTO implements BaseDTO<Long> {
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
 
-  public ArticleImageDTO(Long articleId, String imageURL, LocalDateTime createdAt){
+  public ArticleImageEntity(Long articleId, String imageURL, LocalDateTime createdAt){
     this.articleId = articleId;
     this.imageURL = imageURL;
     this.createdAt = createdAt;

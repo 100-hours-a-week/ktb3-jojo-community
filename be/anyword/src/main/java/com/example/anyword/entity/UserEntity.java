@@ -1,6 +1,6 @@
-package com.example.anyword.dto;
+package com.example.anyword.entity;
 
-public class UserDTO implements BaseDTO<Long> {
+public class UserEntity implements BaseEntity<Long> {
   private Long id; //PK
 
   private String email;
@@ -9,7 +9,7 @@ public class UserDTO implements BaseDTO<Long> {
   private String profileImageUrl;
 
   // 데이터 저장을 위한 생성자 (ID 제외)
-  public UserDTO(String email, String password, String nickname, String profileImageUrl) {
+  public UserEntity(String email, String password, String nickname, String profileImageUrl) {
     this.email = email;
     this.password = password;
     this.nickname = nickname;

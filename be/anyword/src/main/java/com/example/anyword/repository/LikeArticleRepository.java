@@ -1,10 +1,10 @@
 package com.example.anyword.repository;
 
-import com.example.anyword.dto.LikeArticleDTO;
+import com.example.anyword.entity.LikeArticleEntity;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class LikeArticleRepository extends BaseRepository<LikeArticleDTO>{
+public class LikeArticleRepository extends BaseRepository<LikeArticleEntity>{
   public LikeArticleRepository(){
     super();
   }

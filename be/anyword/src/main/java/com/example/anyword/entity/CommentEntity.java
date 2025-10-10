@@ -1,9 +1,9 @@
-package com.example.anyword.dto;
+package com.example.anyword.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
-public class CommentDTO implements BaseDTO<Long>{
+public class CommentEntity implements BaseEntity<Long> {
 
   private Long id; //PK
 
@@ -16,7 +16,7 @@ public class CommentDTO implements BaseDTO<Long>{
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime updatedAt;
 
-  public CommentDTO(Long articleId, Long userId, String contents, LocalDateTime createdAt) {
+  public CommentEntity(Long articleId, Long userId, String contents, LocalDateTime createdAt) {
     this.articleId = articleId;
     this.userId = userId;
     this.contents = contents;

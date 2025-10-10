@@ -1,12 +1,12 @@
 package com.example.anyword.repository;
 
-import com.example.anyword.dto.BaseDTO;
+import com.example.anyword.entity.BaseEntity;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class BaseRepository<T extends BaseDTO<Long>> {
+public abstract class BaseRepository<T extends BaseEntity<Long>> {
   protected final Map<Long, T> store;
   protected long sequence;
 

@@ -1,16 +1,16 @@
-package com.example.anyword.dto;
+package com.example.anyword.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
-public class LikeArticleDTO implements BaseDTO<Long>{
+public class LikeArticleEntity implements BaseEntity<Long> {
   private Long id;
   private final Long articleId;
   private final Long userId;
   @JsonFormat(timezone = "Asia/Seoul")
   private final LocalDateTime createdAt;
 
-  public LikeArticleDTO(Long articleId, Long userId, LocalDateTime createdAt) {
+  public LikeArticleEntity(Long articleId, Long userId, LocalDateTime createdAt) {
     this.articleId = articleId;
     this.userId = userId;
     this.createdAt = createdAt;

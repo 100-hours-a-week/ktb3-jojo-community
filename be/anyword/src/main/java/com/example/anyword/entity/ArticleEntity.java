@@ -1,25 +1,25 @@
-package com.example.anyword.dto;
+package com.example.anyword.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
-public class ArticleDTO implements BaseDTO<Long> {
+public class ArticleEntity implements BaseEntity<Long> {
   private Long id; //PK - 초기에 null ..?
 
   private final Long userId; //FK
 
   private String title;
   private String contents;
-  private Long viewCnt;
+  private long viewCnt;
 
   @JsonFormat(timezone = "Asia/Seoul")
   private final LocalDateTime createdAt;
 
-  public ArticleDTO(Long userId, String title, String contents, LocalDateTime createdAt){
+  public ArticleEntity(Long userId, String title, String contents, LocalDateTime createdAt){
     this.userId = userId;
     this.title = title;
     this.contents = contents;
-    this.viewCnt = 0L;
+    this.viewCnt = 0;
     this.createdAt = createdAt;
   }
 
@@ -32,7 +32,7 @@ public class ArticleDTO implements BaseDTO<Long> {
     return userId;
   }
 
-  public Long getViewCnt() {
+  public long getViewCnt() {
     return viewCnt;
   }
 
