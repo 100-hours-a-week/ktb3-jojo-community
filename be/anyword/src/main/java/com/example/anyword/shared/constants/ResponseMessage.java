@@ -15,6 +15,7 @@ public class ResponseMessage {
   // 회원
   public static final String SIGNUP_SUCCESS = "signup_success";
   public static final String EMAIL_DUPLICATE = "email_duplicated";
+  public static final String NICKNAME_DUPLICATE = "nickname_duplicated";
   public static final String USER_NOT_FOUND = "user_not_found";
 
   // 게시글
