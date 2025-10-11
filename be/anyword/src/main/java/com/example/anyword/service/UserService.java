@@ -1,6 +1,6 @@
 package com.example.anyword.service;
 
-import com.example.anyword.dto.user.CreateUserDto;
+import com.example.anyword.dto.user.SignupRequestDto;
 import com.example.anyword.dto.user.LoginRequestDto;
 import com.example.anyword.entity.UserEntity;
 import com.example.anyword.repository.UserRepository;
@@ -20,7 +20,7 @@ public class UserService {
   /**
    * 회원가입 로직 - service layer 에서 비즈니스 로직 검증
    */
-  public UserEntity signup(CreateUserDto dto){ //dto 로 변경 ...?
+  public UserEntity signup(SignupRequestDto dto){ //dto 로 변경 ...?
     if (userRepository.isEmailExist(dto.getEmail())){
       throw new ConflictException(ResponseMessage.EMAIL_DUPLICATE);
     }

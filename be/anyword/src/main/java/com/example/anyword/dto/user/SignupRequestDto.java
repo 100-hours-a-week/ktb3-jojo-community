@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class CreateUserDto {
+public class SignupRequestDto {
   @NotBlank
   @Email
   private final String email;
@@ -21,7 +21,7 @@ public class CreateUserDto {
   @NotBlank
   private final String profileImageUrl;
 
-  public CreateUserDto(String email, String password, String nickname, String profileImageUrl) {
+  public SignupRequestDto(String email, String password, String nickname, String profileImageUrl) {
     this.email = email;
     this.password = password;
     this.nickname = nickname;

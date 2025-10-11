@@ -1,9 +1,14 @@
 package com.example.anyword.controller;
 
+import com.example.anyword.dto.user.BaseResponseDto;
 import com.example.anyword.dto.user.LoginRequestDto;
+import com.example.anyword.dto.user.LoginResponseDto;
+import com.example.anyword.dto.user.SignupResponseDto;
+import com.example.anyword.entity.UserEntity;
 import com.example.anyword.shared.constants.ResponseMessage;
-import com.example.anyword.dto.user.CreateUserDto;
+import com.example.anyword.dto.user.SignupRequestDto;
 import com.example.anyword.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,23 +30,29 @@ public class UserController {
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<?> signup(
+  public ResponseEntity<BaseResponseDto<SignupResponseDto>> signup(
       @Valid
-      @RequestBody CreateUserDto request
+      @RequestBody SignupRequestDto request
   ){
 
-    service.signup(request);
+    UserEntity user = service.signup(request);
+    SignupResponseDto response = new SignupResponseDto(user.getId());
 
-    return ResponseEntity.ok(ResponseMessage.SIGNUP_SUCCESS);
+
+    return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.SIGNUP_SUCCESS, response));
   }
 
   @PostMapping("/login")
   public ResponseEntity<?> login(
     @Valid
-    @RequestBody LoginRequestDto request
+    @RequestBody LoginRequestDto request,
+      HttpSession session
   ){
-    service.login(request);
-    return ResponseEntity.ok(ResponseMessage.LOGIN_SUCCESS);
+    UserEntity user = service.login(request);
+    session.setAttribute("userId", user.getId());
+    LoginResponseDto response = new LoginResponseDto(user);
+
+    return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.LOGIN_SUCCESS, response));
   }
 
 }
