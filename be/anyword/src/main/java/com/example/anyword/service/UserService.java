@@ -14,6 +14,7 @@ import com.example.anyword.shared.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -26,6 +27,7 @@ public class UserService {
   /**
    * 회원가입 로직 - service layer 에서 비즈니스 로직 검증
    */
+  @Transactional
   public UserEntity signup(SignupRequestDto dto){ //dto 로 변경 ...?
     if (userRepository.isEmailExist(dto.getEmail())){
       throw new ConflictException(ResponseMessage.EMAIL_DUPLICATE);
@@ -53,7 +55,7 @@ public class UserService {
     return foundUser;
   }
 
-  private Long getUserIdFromSession(HttpSession session){
+  public Long getUserIdFromSession(HttpSession session){
     return Optional.ofNullable((Long) session.getAttribute(Key.SESSION_USER_ID)).orElseThrow(()->
         new UnauthorizedException(ResponseMessage.UNAUTHORIZED));
   }
@@ -74,10 +76,10 @@ public class UserService {
   private String merge(String incoming, String original) {
     if (incoming == null) return original;
     if (incoming.isBlank()) return null;
-    return incoming;
+    return incoming.trim();
   }
 
-
+  @Transactional
   public UserEntity putUser(HttpSession session, PutUserRequestDto request){
     UserEntity original = getUserFromSession(session);
 
@@ -85,18 +87,30 @@ public class UserService {
     String newNickname = merge(request.getNickname(), original.getNickname());
     String newProfile = merge(request.getProfileImageUrl(), original.getProfileImageUrl());
     String newPassword = merge(request.getPassword(), original.getPassword());
+    if (userRepository.isEmailExist(newEmail)){
+      throw new ConflictException(ResponseMessage.EMAIL_DUPLICATE);
+    }
+
+    if (userRepository.isNicknameExist(newNickname)){
+      throw new ConflictException(ResponseMessage.NICKNAME_DUPLICATE);
+    }
+
 
     UserEntity updated = UserEntity.copyWith(original, newEmail, newPassword, newNickname, newProfile);
 
     return userRepository.save(updated);
   }
 
+
+  @Transactional
   public void signout(HttpSession session){
     Long userId = this.getUserIdFromSession(session);
 
     if (!userRepository.deleteById(userId)){
-      throw new SessionExpiredException(ResponseMessage.SESSION_EXPIRED);
+      throw new BadRequestException(ResponseMessage.FAIL);
     }
+
+    session.invalidate();
   }
 
 }
