@@ -6,6 +6,7 @@ import com.example.anyword.dto.user.LoginResponseDto;
 import com.example.anyword.dto.user.PutUserRequestDto;
 import com.example.anyword.dto.user.SignupResponseDto;
 import com.example.anyword.entity.UserEntity;
+import com.example.anyword.shared.constants.Key;
 import com.example.anyword.shared.constants.ResponseMessage;
 import com.example.anyword.dto.user.SignupRequestDto;
 import com.example.anyword.service.UserService;
@@ -51,7 +52,7 @@ public class UserController {
       HttpSession session
   ){
     UserEntity user = service.login(request);
-    session.setAttribute("userId", user.getId());
+    session.setAttribute(Key.SESSION_USER_ID, user.getId());
     LoginResponseDto response = new LoginResponseDto(user);
 
     return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.LOGIN_SUCCESS, response));
