@@ -11,6 +11,7 @@ public class ResponseMessage {
   public static final String LOGIN_FAIL = "login_fail";
   public static final String LOGOUT_SUCCESS = "logout_success";
   public static final String UNAUTHORIZED = "unauthorized";
+  public static final String SESSION_EXPIRED = "session_expired";
 
   // 회원
   public static final String SIGNUP_SUCCESS = "signup_success";

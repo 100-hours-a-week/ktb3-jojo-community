@@ -1,4 +1,4 @@
-package com.example.anyword.dto.user;
+package com.example.anyword.dto;
 
 public class BaseResponseDto<T> {
   private final String message;

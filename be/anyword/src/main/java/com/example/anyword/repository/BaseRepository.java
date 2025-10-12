@@ -17,8 +17,10 @@ public abstract class BaseRepository<T extends BaseEntity<Long>> {
 
   public T save(T entity){
     //post 시 할당
-    sequence++;
-    entity.setId(sequence);
+    if (entity.getId() == null) {
+      sequence++;
+      entity.setId(sequence);
+    }
 
     store.put(entity.getId(), entity);
     return entity;
