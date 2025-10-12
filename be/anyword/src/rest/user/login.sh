@@ -1,4 +1,4 @@
-curl -i -c cookies.txt \
+curl -i -c ../cookies.txt \
 -X POST http://localhost:8080/api/user/login \
 -H "Content-Type: application/json" \
 -d '{

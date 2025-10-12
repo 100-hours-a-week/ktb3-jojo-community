@@ -15,12 +15,12 @@ public class ArticleEntity implements BaseEntity<Long> {
   @JsonFormat(timezone = "Asia/Seoul")
   private final LocalDateTime createdAt;
 
-  public ArticleEntity(Long userId, String title, String contents, LocalDateTime createdAt){
+  public ArticleEntity(Long userId, String title, String contents){
     this.userId = userId;
     this.title = title;
     this.contents = contents;
     this.viewCnt = 0;
-    this.createdAt = createdAt;
+    this.createdAt = LocalDateTime.now();
   }
 
   @Override

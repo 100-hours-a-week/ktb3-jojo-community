@@ -12,10 +12,10 @@ public class ArticleImageEntity implements BaseEntity<Long> {
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
 
-  public ArticleImageEntity(Long articleId, String imageURL, LocalDateTime createdAt){
+  public ArticleImageEntity(Long articleId, String imageURL){
     this.articleId = articleId;
     this.imageURL = imageURL;
-    this.createdAt = createdAt;
+    this.createdAt = LocalDateTime.now();
   }
 
 
