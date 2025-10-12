@@ -23,7 +23,9 @@ public class ResponseMessage {
   public static final String ARTICLE_CREATE_SUCCESS = "article_create_success";
   public static final String ARTICLE_UPDATE_SUCCESS = "article_update_success";
   public static final String ARTICLE_DELETE_SUCCESS = "article_delete_success";
+  public static final String ARTICLE_GET_SUCCESS = "article_get_success";
   public static final String ARTICLE_NOT_FOUND = "article_not_found";
+  public static final String LIKED_CONFLICT = "already_liked_by_me";
 
   // 권한
   public static final String FORBIDDEN = "forbidden";

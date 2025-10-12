@@ -1,6 +1,7 @@
 package com.example.anyword.controller;
 
 import com.example.anyword.dto.BaseResponseDto;
+import com.example.anyword.dto.article.GetArticleResponseDto;
 import com.example.anyword.dto.article.PostArticleRequestDto;
 import com.example.anyword.dto.article.PostArticleResponseDto;
 import com.example.anyword.dto.article.PutArticleRequestDto;
@@ -14,6 +15,7 @@ import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,6 +47,17 @@ public class ArticleController {
     return ResponseEntity
         .created(URI.create("/api/article/"+articleId))
         .body(new BaseResponseDto<>(ResponseMessage.ARTICLE_CREATE_SUCCESS, new PostArticleResponseDto(articleId)));
+  }
+
+  @GetMapping("/{articleId}")
+  public ResponseEntity<BaseResponseDto<GetArticleResponseDto>> getArticle(
+      HttpSession session,
+      @PathVariable Long articleId) {
+
+    Long userId = userService.getUserIdFromSession(session);
+    GetArticleResponseDto data = articleService.getArticle(articleId, userId);
+
+    return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.ARTICLE_GET_SUCCESS, data));
   }
 
   @PutMapping("/{articleId}")

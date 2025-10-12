@@ -9,4 +9,10 @@ public class CommentRepository extends BaseRepository<CommentEntity>{
     super();
   }
 
+  public long countByArticleId(Long articleId) {
+    return store.values()
+        .stream()
+        .filter(image -> image.getArticleId().equals(articleId))
+        .count();
+  }
 }
