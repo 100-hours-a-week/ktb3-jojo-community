@@ -1,8 +1,8 @@
 package com.example.anyword.service;
 
-import com.example.anyword.dto.user.PutUserRequestDto;
-import com.example.anyword.dto.user.SignupRequestDto;
-import com.example.anyword.dto.user.LoginRequestDto;
+import com.example.anyword.dto.user.request.PutUserRequestDto;
+import com.example.anyword.dto.user.request.SignupRequestDto;
+import com.example.anyword.dto.user.request.LoginRequestDto;
 import com.example.anyword.entity.UserEntity;
 import com.example.anyword.repository.UserRepository;
 import com.example.anyword.shared.constants.Key;

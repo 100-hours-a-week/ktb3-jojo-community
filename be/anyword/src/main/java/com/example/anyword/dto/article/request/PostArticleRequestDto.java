@@ -1,4 +1,4 @@
-package com.example.anyword.dto.article;
+package com.example.anyword.dto.article.request;
 
 import com.example.anyword.entity.ArticleEntity;
 import com.example.anyword.shared.constants.ValidErrorMessage;

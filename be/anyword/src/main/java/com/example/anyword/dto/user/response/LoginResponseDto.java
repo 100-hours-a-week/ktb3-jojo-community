@@ -1,4 +1,4 @@
-package com.example.anyword.dto.user;
+package com.example.anyword.dto.user.response;
 
 import com.example.anyword.entity.UserEntity;
 

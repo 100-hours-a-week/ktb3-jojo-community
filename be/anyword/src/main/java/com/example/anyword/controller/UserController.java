@@ -1,14 +1,14 @@
 package com.example.anyword.controller;
 
 import com.example.anyword.dto.BaseResponseDto;
-import com.example.anyword.dto.user.LoginRequestDto;
-import com.example.anyword.dto.user.LoginResponseDto;
-import com.example.anyword.dto.user.PutUserRequestDto;
-import com.example.anyword.dto.user.SignupResponseDto;
+import com.example.anyword.dto.user.request.LoginRequestDto;
+import com.example.anyword.dto.user.response.LoginResponseDto;
+import com.example.anyword.dto.user.request.PutUserRequestDto;
+import com.example.anyword.dto.user.response.SignupResponseDto;
 import com.example.anyword.entity.UserEntity;
 import com.example.anyword.shared.constants.Key;
 import com.example.anyword.shared.constants.ResponseMessage;
-import com.example.anyword.dto.user.SignupRequestDto;
+import com.example.anyword.dto.user.request.SignupRequestDto;
 import com.example.anyword.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;

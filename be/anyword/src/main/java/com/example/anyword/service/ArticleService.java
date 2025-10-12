@@ -3,9 +3,9 @@ package com.example.anyword.service;
 
 import com.example.anyword.dto.article.ArticleStatusInfo;
 import com.example.anyword.dto.article.AuthorInfo;
-import com.example.anyword.dto.article.GetArticleResponseDto;
-import com.example.anyword.dto.article.PostArticleRequestDto;
-import com.example.anyword.dto.article.PutArticleRequestDto;
+import com.example.anyword.dto.article.response.GetArticleResponseDto;
+import com.example.anyword.dto.article.request.PostArticleRequestDto;
+import com.example.anyword.dto.article.request.PutArticleRequestDto;
 import com.example.anyword.entity.ArticleEntity;
 import com.example.anyword.entity.ArticleImageEntity;
 import com.example.anyword.entity.UserEntity;

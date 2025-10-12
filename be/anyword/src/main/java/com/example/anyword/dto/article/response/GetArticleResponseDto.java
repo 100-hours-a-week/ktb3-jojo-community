@@ -1,5 +1,7 @@
-package com.example.anyword.dto.article;
+package com.example.anyword.dto.article.response;
 
+import com.example.anyword.dto.article.ArticleStatusInfo;
+import com.example.anyword.dto.article.AuthorInfo;
 import com.example.anyword.entity.ArticleEntity;
 import java.time.LocalDateTime;
 import java.util.List;

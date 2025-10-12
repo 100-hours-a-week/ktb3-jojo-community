@@ -1,4 +1,4 @@
-package com.example.anyword.dto.article;
+package com.example.anyword.dto.article.response;
 
 public class PutArticleResponseDto extends PostArticleResponseDto {
 

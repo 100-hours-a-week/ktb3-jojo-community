@@ -1,11 +1,11 @@
 package com.example.anyword.controller;
 
 import com.example.anyword.dto.BaseResponseDto;
-import com.example.anyword.dto.article.GetArticleResponseDto;
-import com.example.anyword.dto.article.PostArticleRequestDto;
-import com.example.anyword.dto.article.PostArticleResponseDto;
-import com.example.anyword.dto.article.PutArticleRequestDto;
-import com.example.anyword.dto.article.PutArticleResponseDto;
+import com.example.anyword.dto.article.response.GetArticleResponseDto;
+import com.example.anyword.dto.article.request.PostArticleRequestDto;
+import com.example.anyword.dto.article.response.PostArticleResponseDto;
+import com.example.anyword.dto.article.request.PutArticleRequestDto;
+import com.example.anyword.dto.article.response.PutArticleResponseDto;
 import com.example.anyword.service.ArticleService;
 import com.example.anyword.service.UserService;
 import com.example.anyword.shared.constants.ResponseMessage;
