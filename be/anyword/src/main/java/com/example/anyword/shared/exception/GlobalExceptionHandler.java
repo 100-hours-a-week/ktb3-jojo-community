@@ -1,5 +1,7 @@
 package com.example.anyword.shared.exception;
 
+import com.example.anyword.dto.BaseResponseDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,25 +12,30 @@ public class GlobalExceptionHandler {
 
   //@Valid 검증 실패 - dto 검증 실패
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex) {
+  public ResponseEntity<BaseResponseDto<?>> handleValidationException(MethodArgumentNotValidException ex) {
     //첫번째 에러 메시지 반환
     String errorMessage = ex.getBindingResult()
         .getAllErrors()
         .get(0)
         .getDefaultMessage();
 
-    return ResponseEntity.status(400).body(errorMessage);
+    return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(new BaseResponseDto<>(errorMessage));
   }
 
   //service
   @ExceptionHandler(BusinessException.class)
-  public ResponseEntity<?> handleBusinessException(BusinessException ex) {
-    return ResponseEntity.status(ex.getStatusCode()).body(ex.getMessage());
+  public ResponseEntity<BaseResponseDto<?>> handleBusinessException(BusinessException ex) {
+    return ResponseEntity
+        .status(ex.getStatusCode())
+        .body(new BaseResponseDto<>(ex.getMessage()));
   }
 
   //기타
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<?> handleException(Exception ex) {
-    return ResponseEntity.status(500).body(ex); //TODO: error message 정확히
+  public ResponseEntity<BaseResponseDto<?>> handleException(Exception ex) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(new BaseResponseDto<>(ex.getMessage()));
   }
 }
