@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -69,6 +70,13 @@ public class UserController {
     UserEntity updatedUser = service.putUser(session, request);
 
     return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.SUCCESS, updatedUser));
+  }
+
+  @DeleteMapping("/current/signout")
+  public ResponseEntity<?> signOut(HttpSession session){
+    service.signout(session);
+
+    return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.SUCCESS));
   }
 
 }

@@ -34,4 +34,12 @@ public abstract class BaseRepository<T extends BaseEntity<Long>> {
     return new ArrayList<>(store.values());
   }
 
+  public boolean deleteById(Long id){
+    if(store.containsKey(id)){
+      store.remove(id);
+      return true;
+    }
+    return false;
+  }
+
 }

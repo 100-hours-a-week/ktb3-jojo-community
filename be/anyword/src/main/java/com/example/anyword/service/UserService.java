@@ -5,6 +5,7 @@ import com.example.anyword.dto.user.SignupRequestDto;
 import com.example.anyword.dto.user.LoginRequestDto;
 import com.example.anyword.entity.UserEntity;
 import com.example.anyword.repository.UserRepository;
+import com.example.anyword.shared.constants.Key;
 import com.example.anyword.shared.constants.ResponseMessage;
 import com.example.anyword.shared.exception.BadRequestException;
 import com.example.anyword.shared.exception.ConflictException;
@@ -53,7 +54,7 @@ public class UserService {
   }
 
   private Long getUserIdFromSession(HttpSession session){
-    return Optional.ofNullable((Long) session.getAttribute("userId")).orElseThrow(()->
+    return Optional.ofNullable((Long) session.getAttribute(Key.SESSION_USER_ID)).orElseThrow(()->
         new UnauthorizedException(ResponseMessage.UNAUTHORIZED));
   }
 
@@ -88,6 +89,14 @@ public class UserService {
     UserEntity updated = UserEntity.copyWith(original, newEmail, newPassword, newNickname, newProfile);
 
     return userRepository.save(updated);
+  }
+
+  public void signout(HttpSession session){
+    Long userId = this.getUserIdFromSession(session);
+
+    if (!userRepository.deleteById(userId)){
+      throw new SessionExpiredException(ResponseMessage.SESSION_EXPIRED);
+    }
   }
 
 }

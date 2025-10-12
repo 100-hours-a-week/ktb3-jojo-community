@@ -9,6 +9,10 @@ public class BaseResponseDto<T> {
     this.data = data;
   }
 
+  public BaseResponseDto(String message){
+    this.message = message;
+    this.data = null;
+  }
 
   public String getMessage() {
     return message;
