@@ -1,13 +1,13 @@
 package com.example.anyword.dto.article;
 
 public class PostArticleResponseDto {
-  private final Long postId;
+  private final Long articleId;
 
-  public PostArticleResponseDto(Long postId) {
-    this.postId = postId;
+  public PostArticleResponseDto(Long articleId) {
+    this.articleId = articleId;
   }
 
-  public Long getPostId() {
-    return postId;
+  public Long getArticleId() {
+    return articleId;
   }
 }

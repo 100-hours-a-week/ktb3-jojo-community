@@ -12,6 +12,7 @@ import com.example.anyword.shared.exception.ConflictException;
 import com.example.anyword.shared.exception.SessionExpiredException;
 import com.example.anyword.shared.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpSession;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,11 +88,11 @@ public class UserService {
     String newNickname = merge(request.getNickname(), original.getNickname());
     String newProfile = merge(request.getProfileImageUrl(), original.getProfileImageUrl());
     String newPassword = merge(request.getPassword(), original.getPassword());
-    if (userRepository.isEmailExist(newEmail)){
+    if (!Objects.requireNonNull(newEmail).equals(original.getEmail()) && userRepository.isEmailExist(newEmail)) {
       throw new ConflictException(ResponseMessage.EMAIL_DUPLICATE);
     }
 
-    if (userRepository.isNicknameExist(newNickname)){
+    if (!Objects.requireNonNull(newNickname).equals(original.getNickname()) && userRepository.isNicknameExist(newNickname)) {
       throw new ConflictException(ResponseMessage.NICKNAME_DUPLICATE);
     }
 

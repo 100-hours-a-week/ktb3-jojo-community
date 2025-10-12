@@ -15,12 +15,24 @@ public class ArticleEntity implements BaseEntity<Long> {
   @JsonFormat(timezone = "Asia/Seoul")
   private final LocalDateTime createdAt;
 
+  @JsonFormat(timezone = "Asia/Seoul")
+  private LocalDateTime updatedAt;
+
   public ArticleEntity(Long userId, String title, String contents){
     this.userId = userId;
     this.title = title;
     this.contents = contents;
     this.viewCnt = 0;
     this.createdAt = LocalDateTime.now();
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  public static ArticleEntity copyWith(ArticleEntity original, String newTitle, String newContent) {
+    return new ArticleEntity(
+        original.getId(),
+        newTitle != null ? newTitle : original.getTitle(),
+        newContent != null ? newContent : original.getContents()
+    );
   }
 
   @Override
@@ -48,6 +60,11 @@ public class ArticleEntity implements BaseEntity<Long> {
     return createdAt;
   }
 
+  public LocalDateTime getUpdatedAt() {
+    return updatedAt;
+  }
+
+
   @Override
   public void setId(Long postId) {
     this.id = postId;
@@ -64,4 +81,6 @@ public class ArticleEntity implements BaseEntity<Long> {
   public void setViewCnt(Long viewCnt) {
     this.viewCnt = viewCnt;
   }
+
+  public void setUpdatedAt(LocalDateTime time){this.updatedAt = time;}
 }

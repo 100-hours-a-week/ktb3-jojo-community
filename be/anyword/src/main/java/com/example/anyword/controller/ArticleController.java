@@ -3,14 +3,18 @@ package com.example.anyword.controller;
 import com.example.anyword.dto.BaseResponseDto;
 import com.example.anyword.dto.article.PostArticleRequestDto;
 import com.example.anyword.dto.article.PostArticleResponseDto;
+import com.example.anyword.dto.article.PutArticleRequestDto;
+import com.example.anyword.dto.article.PutArticleResponseDto;
 import com.example.anyword.service.ArticleService;
 import com.example.anyword.service.UserService;
 import com.example.anyword.shared.constants.ResponseMessage;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,19 +37,36 @@ public class ArticleController {
   }
 
   @PostMapping
-  public ResponseEntity<BaseResponseDto<PostArticleResponseDto>> createArticle(@Valid @RequestBody PostArticleRequestDto request, HttpSession session){
+  public ResponseEntity<BaseResponseDto<PostArticleResponseDto>> createArticle(
+      @Valid @RequestBody PostArticleRequestDto request, HttpSession session){
     Long userId = userService.getUserIdFromSession(session);
-    Long postId = articleService.createArticle(userId, request);
+    Long articleId = articleService.createArticle(userId, request);
 
-    return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.SUCCESS, new PostArticleResponseDto(postId)));
+    return ResponseEntity
+        .created(URI.create("/api/article/"+articleId))
+        .body(new BaseResponseDto<>(ResponseMessage.ARTICLE_CREATE_SUCCESS, new PostArticleResponseDto(articleId)));
   }
 
-//  @PutMapping
-//
-//  @DeleteMapping
+  @PutMapping("/{articleId}")
+  public ResponseEntity<BaseResponseDto<PutArticleResponseDto>> createArticle(
+      @Valid @RequestBody PutArticleRequestDto request,
+      HttpSession session,
+      @PathVariable Long articleId){
+    Long userId = userService.getUserIdFromSession(session);
+    articleService.putArticle(userId, articleId, request);
 
+    return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.ARTICLE_UPDATE_SUCCESS, new PutArticleResponseDto(articleId)));
+  }
 
+  @DeleteMapping("/{articleId}")
+  public ResponseEntity<?> deleteArticle(
+      HttpSession session,
+      @PathVariable Long articleId) {
 
+    Long userId = userService.getUserIdFromSession(session);
+    articleService.deleteArticle(userId, articleId);
 
+    return ResponseEntity.noContent().build();
+  }
 
 }

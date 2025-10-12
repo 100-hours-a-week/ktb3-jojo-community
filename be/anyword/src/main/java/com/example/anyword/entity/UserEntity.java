@@ -61,7 +61,7 @@ public class UserEntity implements BaseEntity<Long> {
       String profileImageUrl) {
 
     return new UserEntity(
-        original.id,
+        original.getId(),
         email != null ? email : original.email,
         password != null ? password : original.password,
         nickname != null ? nickname : original.nickname,

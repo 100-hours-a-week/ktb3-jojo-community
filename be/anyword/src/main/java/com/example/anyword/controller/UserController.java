@@ -12,6 +12,7 @@ import com.example.anyword.dto.user.SignupRequestDto;
 import com.example.anyword.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,7 +43,7 @@ public class UserController {
     SignupResponseDto response = new SignupResponseDto(user.getId());
 
 
-    return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.SIGNUP_SUCCESS, response));
+    return ResponseEntity.created(URI.create("api/user/current")).body(new BaseResponseDto<>(ResponseMessage.SIGNUP_SUCCESS, response));
   }
 
   @PostMapping("/login")
@@ -77,7 +78,6 @@ public class UserController {
   public ResponseEntity<?> signOut(HttpSession session){
     service.signout(session);
 
-    return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.SUCCESS));
+    return ResponseEntity.noContent().build();
   }
-
 }

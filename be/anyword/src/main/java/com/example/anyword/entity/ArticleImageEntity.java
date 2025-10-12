@@ -30,7 +30,7 @@ public class ArticleImageEntity implements BaseEntity<Long> {
   }
 
 
-  public String getImageURL(){
+  public String getImageUrl(){
     return imageURL;
   }
 
