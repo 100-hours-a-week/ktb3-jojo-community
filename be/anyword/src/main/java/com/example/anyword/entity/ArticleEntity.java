@@ -66,8 +66,8 @@ public class ArticleEntity implements BaseEntity<Long> {
 
 
   @Override
-  public void setId(Long postId) {
-    this.id = postId;
+  public void setId(Long articleId) {
+    this.id = articleId;
   }
 
   public void setTitle(String title) {

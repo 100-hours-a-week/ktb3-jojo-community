@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class GetArticleResponseDto {
-  private Long postId;
+  private Long articleId;
   private String title;
   private String contents;
   private AuthorInfo author;
@@ -28,7 +28,7 @@ public class GetArticleResponseDto {
       List<String> imageUrls
   ) {
     GetArticleResponseDto dto = new GetArticleResponseDto();
-    dto.postId = article.getId();
+    dto.articleId = article.getId();
     dto.title = article.getTitle();
     dto.contents = article.getContents();
     dto.author = author;
@@ -41,8 +41,8 @@ public class GetArticleResponseDto {
     return dto;
   }
 
-  public Long getPostId() {
-    return postId;
+  public Long getArticleId() {
+    return articleId;
   }
 
 
