@@ -10,10 +10,10 @@ public class LikeArticleEntity implements BaseEntity<Long> {
   @JsonFormat(timezone = "Asia/Seoul")
   private final LocalDateTime createdAt;
 
-  public LikeArticleEntity(Long articleId, Long userId, LocalDateTime createdAt) {
+  public LikeArticleEntity(Long articleId, Long userId) {
     this.articleId = articleId;
     this.userId = userId;
-    this.createdAt = createdAt;
+    this.createdAt = LocalDateTime.now();
   }
 
   @Override

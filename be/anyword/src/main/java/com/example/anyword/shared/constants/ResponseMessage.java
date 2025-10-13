@@ -5,6 +5,7 @@ public class ResponseMessage {
   // 공통
   public static final String SUCCESS = "success";
   public static final String FAIL = "fail";
+  public final static String ALREADY_EXISTS = "already_exists";
 
   // 인증
   public static final String LOGIN_SUCCESS = "login_success";
@@ -26,6 +27,7 @@ public class ResponseMessage {
   public static final String ARTICLE_GET_SUCCESS = "article_get_success";
   public static final String ARTICLE_NOT_FOUND = "article_not_found";
   public static final String LIKED_CONFLICT = "already_liked_by_me";
+  public static final String LIKED_NOT_FOUND = "좋아요를 누르지 않은 게시글입니다";
 
   // 권한
   public static final String FORBIDDEN = "forbidden";

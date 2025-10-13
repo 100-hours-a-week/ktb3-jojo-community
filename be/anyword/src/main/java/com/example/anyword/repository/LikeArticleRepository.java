@@ -23,16 +23,6 @@ public class LikeArticleRepository extends BaseRepository<LikeArticleEntity>{
             && currentUserId.equals(e.getUserId()));
   }
 
-
-
-  @Override
-  public LikeArticleEntity save(LikeArticleEntity e) {
-    if (existsByArticleIdAndUserId(e.getArticleId(), e.getUserId())) {
-      throw new ConflictException(ResponseMessage.LIKED_CONFLICT);
-    }
-    return super.save(e);
-  }
-
   public boolean deleteByArticleIdAndUserId(Long articleId, Long userId) {
     Long keyToRemove = null;
 
