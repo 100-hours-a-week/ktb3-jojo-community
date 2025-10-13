@@ -3,6 +3,6 @@ curl -i -b ../cookies.txt \
 -H "Content-Type: application/json" \
 -d '{
     "title":"제목 1",
-    "content":"내용",
+    "content":"내용22222222222",
     "imageUrls":["https://...", "https://..."]
     }'
