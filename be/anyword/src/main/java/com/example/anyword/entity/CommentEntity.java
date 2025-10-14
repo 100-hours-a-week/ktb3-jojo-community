@@ -16,12 +16,12 @@ public class CommentEntity implements BaseEntity<Long> {
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime updatedAt;
 
-  public CommentEntity(Long articleId, Long userId, String contents, LocalDateTime createdAt) {
+  public CommentEntity(Long articleId, Long userId, String contents) {
     this.articleId = articleId;
     this.userId = userId;
     this.contents = contents;
-    this.createdAt = createdAt;
-    this.updatedAt = createdAt;
+    this.createdAt = LocalDateTime.now();
+    this.updatedAt = LocalDateTime.now();
   }
 
 

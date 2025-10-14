@@ -27,7 +27,11 @@ public class ResponseMessage {
   public static final String ARTICLE_GET_SUCCESS = "article_get_success";
   public static final String ARTICLE_NOT_FOUND = "article_not_found";
   public static final String LIKED_CONFLICT = "already_liked_by_me";
-  public static final String LIKED_NOT_FOUND = "좋아요를 누르지 않은 게시글입니다";
+  public static final String LIKED_NOT_FOUND = "liked_not_found";
+  public static final String COMMENT_CREATED_SUCCESS = "comment_created_success";
+  public static final String COMMENT_UPDATED_SUCCESS = "comment_updated_success";
+  public static final String COMMENT_DELETE_SUCCESS = "comment_delete_success";
+  public static final String COMMENT_NOT_FOUND = "comment_not_found";
 
   // 권한
   public static final String FORBIDDEN = "forbidden";
