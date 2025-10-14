@@ -6,6 +6,8 @@ public class ArticleStatusInfo {
   private long comments;
   private long views;
 
+  public ArticleStatusInfo(){};
+
   public ArticleStatusInfo(long likes, long comments, long views) {
     this.likes = likes;
     this.comments = comments;

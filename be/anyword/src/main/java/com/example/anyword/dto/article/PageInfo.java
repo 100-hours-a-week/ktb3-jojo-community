@@ -6,7 +6,7 @@ public class PageInfo {
   private Boolean hasNext;
   private Integer pageSize;
 
-  public PageInfo() {}
+  public PageInfo() {};
 
   public PageInfo(Integer nextPage, Boolean hasNext, Integer pageSize) {
     this.nextPage = nextPage;

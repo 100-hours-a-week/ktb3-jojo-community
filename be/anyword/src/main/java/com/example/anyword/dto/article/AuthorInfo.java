@@ -7,6 +7,8 @@ public class AuthorInfo {
   private String nickname;
   private String profileImageUrl;
 
+  public AuthorInfo(){};
+
 
   public AuthorInfo(Long id, String nickname, String profileImageUrl) {
     this.id = id;

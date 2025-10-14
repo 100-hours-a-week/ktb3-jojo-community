@@ -18,6 +18,7 @@ public class GetArticleResponseDto {
   private Boolean likedByMe;
   private Boolean isMyContents;
 
+  public GetArticleResponseDto(){};
 
   public static GetArticleResponseDto from(
       ArticleEntity article,
