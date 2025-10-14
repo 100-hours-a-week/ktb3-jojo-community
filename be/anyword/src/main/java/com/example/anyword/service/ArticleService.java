@@ -120,7 +120,7 @@ public class ArticleService {
     ArticleEntity article = articleRepository.findById(articleId)
         .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
-    //TODO: 조회수 자동 갱신;
+    article.incrementViews();
 
      UserEntity author = userRepository.findById(article.getUserId())
          .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));

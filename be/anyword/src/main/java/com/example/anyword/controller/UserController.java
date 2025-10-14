@@ -1,5 +1,11 @@
 package com.example.anyword.controller;
 
+import static com.example.anyword.shared.constants.ResponseMessage.LOGIN_SUCCESS;
+import static com.example.anyword.shared.constants.ResponseMessage.LOGOUT_SUCCESS;
+import static com.example.anyword.shared.constants.ResponseMessage.SESSION_EXPIRED;
+import static com.example.anyword.shared.constants.ResponseMessage.SIGNUP_SUCCESS;
+import static com.example.anyword.shared.constants.ResponseMessage.SUCCESS;
+
 import com.example.anyword.dto.BaseResponseDto;
 import com.example.anyword.dto.user.request.LoginRequestDto;
 import com.example.anyword.dto.user.response.LoginResponseDto;
@@ -10,6 +16,7 @@ import com.example.anyword.shared.constants.Key;
 import com.example.anyword.shared.constants.ResponseMessage;
 import com.example.anyword.dto.user.request.SignupRequestDto;
 import com.example.anyword.service.UserService;
+import com.example.anyword.shared.exception.SessionExpiredException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -43,7 +50,7 @@ public class UserController {
     SignupResponseDto response = new SignupResponseDto(user.getId());
 
 
-    return ResponseEntity.created(URI.create("api/user/current")).body(new BaseResponseDto<>(ResponseMessage.SIGNUP_SUCCESS, response));
+    return ResponseEntity.created(URI.create("api/user/current")).body(new BaseResponseDto<>(SIGNUP_SUCCESS, response));
   }
 
   @PostMapping("/login")
@@ -56,14 +63,14 @@ public class UserController {
     session.setAttribute(Key.SESSION_USER_ID, user.getId());
     LoginResponseDto response = new LoginResponseDto(user);
 
-    return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.LOGIN_SUCCESS, response));
+    return ResponseEntity.ok(new BaseResponseDto<>(LOGIN_SUCCESS, response));
   }
 
   @GetMapping("/current")
   public ResponseEntity<?> currentUser(HttpSession session){
     UserEntity user = service.getUserFromSession(session);
 
-    return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.SUCCESS, user));
+    return ResponseEntity.ok(new BaseResponseDto<>(SUCCESS, user));
   }
 
   @PutMapping("/current")
@@ -71,7 +78,18 @@ public class UserController {
       HttpSession session){
     UserEntity updatedUser = service.putUser(session, request);
 
-    return ResponseEntity.ok(new BaseResponseDto<>(ResponseMessage.SUCCESS, updatedUser));
+    return ResponseEntity.ok(new BaseResponseDto<>(SUCCESS, updatedUser));
+  }
+
+
+  @PostMapping("/current/logout")
+  public ResponseEntity<?> logout(HttpSession session){
+    try{
+      session.invalidate();
+    } catch (Exception e) {
+      throw new SessionExpiredException(SESSION_EXPIRED);
+    }
+    return ResponseEntity.ok(new BaseResponseDto<>(LOGOUT_SUCCESS));
   }
 
   @DeleteMapping("/current/signout")
