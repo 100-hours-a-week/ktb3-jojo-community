@@ -26,8 +26,13 @@ public class ResponseMessage {
   public static final String ARTICLE_DELETE_SUCCESS = "article_delete_success";
   public static final String ARTICLE_GET_SUCCESS = "article_get_success";
   public static final String ARTICLE_NOT_FOUND = "article_not_found";
+
+  //좋아요
   public static final String LIKED_CONFLICT = "already_liked_by_me";
   public static final String LIKED_NOT_FOUND = "liked_not_found";
+
+  //코멘트
+  public static final String COMMENT_GET_SUCCESS = "comment_get_success";
   public static final String COMMENT_CREATED_SUCCESS = "comment_created_success";
   public static final String COMMENT_UPDATED_SUCCESS = "comment_updated_success";
   public static final String COMMENT_DELETE_SUCCESS = "comment_delete_success";

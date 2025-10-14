@@ -1,5 +1,7 @@
 package com.example.anyword.dto.article;
 
+import com.example.anyword.entity.UserEntity;
+
 public class AuthorInfo {
   private Long id;
   private String nickname;
@@ -10,6 +12,11 @@ public class AuthorInfo {
     this.id = id;
     this.nickname = nickname;
     this.profileImageUrl = profileImageUrl;
+  }
+
+  public static AuthorInfo from(UserEntity user){
+    return new AuthorInfo(user.getId(), user.getNickname(),
+        user.getProfileImageUrl());
   }
 
 

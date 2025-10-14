@@ -125,8 +125,7 @@ public class ArticleService {
      UserEntity author = userRepository.findById(article.getUserId())
          .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 
-     AuthorInfo authorInfo = new AuthorInfo(author.getId(), author.getNickname(),
-         author.getProfileImageUrl());
+     AuthorInfo authorInfo = AuthorInfo.from(author);
 
      long likesCount = likeRepository.countByArticleId(articleId);
      long commentsCount = commentRepository.countByArticleId(articleId);

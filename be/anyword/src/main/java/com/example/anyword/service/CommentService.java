@@ -4,13 +4,18 @@ import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_NOT_F
 import static com.example.anyword.shared.constants.ResponseMessage.COMMENT_NOT_FOUND;
 import static com.example.anyword.shared.constants.ResponseMessage.FORBIDDEN;
 
+import com.example.anyword.dto.article.AuthorInfo;
+import com.example.anyword.dto.comment.CommentItem;
 import com.example.anyword.dto.comment.CommentRequestDto;
+import com.example.anyword.dto.comment.GetCommentListResponseDto;
+import com.example.anyword.entity.ArticleEntity;
 import com.example.anyword.entity.CommentEntity;
 import com.example.anyword.repository.ArticleRepository;
 import com.example.anyword.repository.CommentRepository;
 import com.example.anyword.shared.exception.ForbiddenException;
 import com.example.anyword.shared.exception.NotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +25,14 @@ public class CommentService {
   private final CommentRepository commentRepository;
   private final ArticleRepository articleRepository;
 
+  private final UserService userService;  //TODO: service 간 의존관계 ..? -> layer 나누기 고민
 
-  public CommentService(CommentRepository commentRepository, ArticleRepository articleRepository) {
+
+  public CommentService(CommentRepository commentRepository, ArticleRepository articleRepository,
+      UserService userService) {
     this.commentRepository = commentRepository;
     this.articleRepository = articleRepository;
+    this.userService = userService;
   }
 
 
@@ -38,10 +47,14 @@ public class CommentService {
     }
   }
 
+  private ArticleEntity findArticle(Long articleId){
+    return articleRepository.findById(articleId).orElseThrow(()->new NotFoundException(ARTICLE_NOT_FOUND));
+  }
+
 
   @Transactional
   public CommentEntity createComment(Long articleId, Long userId, CommentRequestDto request) {
-    articleRepository.findById(articleId).orElseThrow(()->new NotFoundException(ARTICLE_NOT_FOUND));
+    findArticle(articleId);
     CommentEntity comment = new CommentEntity(articleId, userId, request.getContent());
 
     return commentRepository.save(comment);
@@ -66,9 +79,28 @@ public class CommentService {
   }
 
 
+  public GetCommentListResponseDto getCommentsList(Long articleId, Long currentUserId) {
+    findArticle(articleId);
+    List<CommentEntity> comments = commentRepository.findAllByArticleIdOrderByCreatedAtDesc(articleId);
 
+    //entity -> dto로 변환
+    List<CommentItem> items = comments.stream()
+        .map(comment -> {
+          AuthorInfo author = userService.UserIdToAuthorInfo(comment.getUserId());
 
+          boolean editable = currentUserId != null && comment.getUserId().equals(currentUserId);
 
+          return new CommentItem(
+              comment.getId(),
+              comment.getContents(),
+              author,
+              editable,
+              comment.getCreatedAt()
+          );
+        })
+        .toList();
 
+    return new GetCommentListResponseDto(articleId, items);
+  }
 
 }

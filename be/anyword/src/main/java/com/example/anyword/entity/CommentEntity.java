@@ -45,6 +45,10 @@ public class CommentEntity implements BaseEntity<Long> {
     return articleId;
   }
 
+  public String getContents() {
+    return contents;
+  }
+
   public LocalDateTime getUpdatedAt() {
     return updatedAt;
   }
