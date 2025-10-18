@@ -1,47 +1,21 @@
 package com.example.anyword.repository;
 
 import com.example.anyword.entity.ArticleEntity;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
-@Repository
-public class ArticleRepository extends BaseRepository<ArticleEntity> {
+public interface ArticleRepository {
+  ArticleEntity save(ArticleEntity entity);
+  Optional<ArticleEntity> findById(Long id);
+  List<ArticleEntity> findAll();
+  boolean deleteById(Long id);
 
-  public ArticleRepository(){
-    super();
-  }
+  /** 최신순 조회 */
+  List<ArticleEntity> findAllByOrderByCreatedAtDesc(int page, int size);
 
+  /** 조회순 조회 */
+  List<ArticleEntity> findAllOrderByPopularity(int page, int size);
 
-  /**
-   * 최신순 조회
-   */
-  public List<ArticleEntity> findAllByOrderByCreatedAtDesc(int page, int size) {
-    return findAll().stream()
-        .sorted(Comparator.comparing(ArticleEntity::getCreatedAt).reversed())
-        .skip((long) page * size)
-        .limit(size)
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * 조회순으로 게시글 목록 조회
-   */
-  public List<ArticleEntity> findAllOrderByPopularity(int page, int size) {
-    return findAll().stream()
-        .sorted(Comparator.comparing(ArticleEntity::getCreatedAt).reversed())
-        .skip((long) page * size)
-        .limit(size)
-        .collect(Collectors.toList());
-  }
-
-
-  /**
-   * 전체 게시글 개수
-   */
-  public long count() {
-    return findAll().size();
-  }
-
+  /** 전체 게시글 개수 */
+  long count();
 }
