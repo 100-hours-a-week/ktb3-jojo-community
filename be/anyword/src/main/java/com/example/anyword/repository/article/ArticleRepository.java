@@ -1,4 +1,4 @@
-package com.example.anyword.repository;
+package com.example.anyword.repository.article;
 
 import com.example.anyword.entity.ArticleEntity;
 import java.util.List;

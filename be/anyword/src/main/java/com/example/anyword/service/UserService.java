@@ -15,7 +15,7 @@ import com.example.anyword.dto.user.response.UserResponseDto;
 import com.example.anyword.dto.user.response.SignupResponseDto;
 import com.example.anyword.entity.UserEntity;
 import com.example.anyword.mapper.UserMapper;
-import com.example.anyword.repository.UserRepository;
+import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.constants.Key;
 import com.example.anyword.shared.exception.BadRequestException;
 import com.example.anyword.shared.exception.ConflictException;

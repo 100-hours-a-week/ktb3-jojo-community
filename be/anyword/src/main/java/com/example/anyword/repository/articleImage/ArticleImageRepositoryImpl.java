@@ -1,6 +1,7 @@
-package com.example.anyword.repository;
+package com.example.anyword.repository.articleImage;
 
 import com.example.anyword.entity.ArticleImageEntity;
+import com.example.anyword.repository.BaseRepository;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 

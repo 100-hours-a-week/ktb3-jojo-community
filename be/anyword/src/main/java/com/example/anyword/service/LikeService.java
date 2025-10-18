@@ -5,8 +5,8 @@ import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_NOT_F
 import static com.example.anyword.shared.constants.ResponseMessage.LIKED_NOT_FOUND;
 
 import com.example.anyword.entity.LikeArticleEntity;
-import com.example.anyword.repository.ArticleRepository;
-import com.example.anyword.repository.LikeArticleRepository;
+import com.example.anyword.repository.article.ArticleRepository;
+import com.example.anyword.repository.like.LikeArticleRepository;
 import com.example.anyword.shared.exception.ConflictException;
 import com.example.anyword.shared.exception.NotFoundException;
 import org.springframework.stereotype.Service;

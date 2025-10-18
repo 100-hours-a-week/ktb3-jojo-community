@@ -1,4 +1,4 @@
-package com.example.anyword.repository;
+package com.example.anyword.repository.articleImage;
 
 import com.example.anyword.entity.ArticleImageEntity;
 import java.util.List;

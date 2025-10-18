@@ -1,6 +1,7 @@
-package com.example.anyword.repository;
+package com.example.anyword.repository.user;
 
 import com.example.anyword.entity.UserEntity;
+import com.example.anyword.repository.BaseRepository;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 

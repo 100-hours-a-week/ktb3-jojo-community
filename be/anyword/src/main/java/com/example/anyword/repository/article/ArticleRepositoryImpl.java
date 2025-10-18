@@ -1,7 +1,8 @@
-package com.example.anyword.repository;
+package com.example.anyword.repository.article;
 
 
 import com.example.anyword.entity.ArticleEntity;
+import com.example.anyword.repository.BaseRepository;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
