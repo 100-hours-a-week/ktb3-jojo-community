@@ -48,11 +48,11 @@ public class ArticleController {
   public ResponseEntity<BaseResponseDto<PostArticleResponseDto>> createArticle(
       @Valid @RequestBody PostArticleRequestDto request, HttpSession session){
     Long userId = userService.getUserIdFromSession(session);
-    Long articleId = articleService.createArticle(userId, request);
+    PostArticleResponseDto response = articleService.createArticle(userId, request);
 
     return ResponseEntity
-        .created(URI.create("/api/article/"+articleId))
-        .body(new BaseResponseDto<>(ARTICLE_CREATE_SUCCESS, new PostArticleResponseDto(articleId)));
+        .created(URI.create("/api/article/"+response.getArticleId()))
+        .body(new BaseResponseDto<>(ARTICLE_CREATE_SUCCESS, response));
   }
 
   @GetMapping("/{articleId}")
@@ -90,9 +90,9 @@ public class ArticleController {
       HttpSession session,
       @PathVariable Long articleId){
     Long userId = userService.getUserIdFromSession(session);
-    articleService.putArticle(userId, articleId, request);
+    PutArticleResponseDto response = articleService.putArticle(userId, articleId, request);
 
-    return ResponseEntity.ok(new BaseResponseDto<>(ARTICLE_UPDATE_SUCCESS, new PutArticleResponseDto(articleId)));
+    return ResponseEntity.ok(new BaseResponseDto<>(ARTICLE_UPDATE_SUCCESS, response));
   }
 
   @DeleteMapping("/{articleId}")
