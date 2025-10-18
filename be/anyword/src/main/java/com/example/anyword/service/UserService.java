@@ -51,9 +51,10 @@ public class UserService {
     }
 
     //TODO: 비밀번호 해쉬 후 넘기기
-    UserEntity user = new UserEntity(dto.getEmail(), dto.getPassword(), dto.getNickname(), dto.getProfileImageUrl());
+    UserEntity saved = userRepository.save(new UserEntity(
+        dto.getEmail(), dto.getPassword(), dto.getNickname(), dto.getProfileImageUrl()));
 
-    return userMapper.toSignupResponseDto(user);
+    return userMapper.toSignupResponseDto(saved);
   }
 
 

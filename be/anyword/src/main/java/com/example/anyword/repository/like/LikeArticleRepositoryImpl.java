@@ -2,7 +2,9 @@ package com.example.anyword.repository.like;
 
 import com.example.anyword.entity.LikeArticleEntity;
 import com.example.anyword.repository.BaseRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class LikeArticleRepositoryImpl extends BaseRepository<LikeArticleEntity> implements LikeArticleRepository{
   public LikeArticleRepositoryImpl(){
     super();
