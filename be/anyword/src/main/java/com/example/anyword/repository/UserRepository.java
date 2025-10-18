@@ -9,5 +9,6 @@ public interface UserRepository {
   boolean isEmailExist(String email);
   boolean isNicknameExist(String nickname);
   UserEntity save(UserEntity user);
+  Optional<UserEntity> findByNickname(String nickname);
   boolean deleteById(Long id);
 }

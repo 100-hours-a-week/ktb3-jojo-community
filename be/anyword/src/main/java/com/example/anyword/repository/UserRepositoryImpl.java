@@ -12,22 +12,26 @@ public class UserRepositoryImpl extends BaseRepository<UserEntity> implements Us
     super();
   }
 
+  @Override
   public Optional<UserEntity> findByEmail(String email) {
     return findAll().stream()
         .filter(user -> user.getEmail().equals(email))
         .findFirst();
   }
 
+  @Override
   public boolean isEmailExist(String email){
     return this.findByEmail(email).isPresent();
   }
 
-  private Optional<UserEntity> findByNickname(String nickname){
+  @Override
+  public Optional<UserEntity> findByNickname(String nickname){
     return findAll().stream()
         .filter(user -> user.getEmail().equals(nickname))
         .findFirst();
   }
 
+  @Override
   public boolean isNicknameExist(String nickname){
     return this.findByNickname(nickname).isPresent();
   }
