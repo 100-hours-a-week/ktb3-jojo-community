@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
         .getDefaultMessage();
 
     return ResponseEntity
-        .status(HttpStatus.NOT_FOUND)
+        .status(HttpStatus.BAD_REQUEST)
         .body(new BaseResponseDto<>(errorMessage));
   }
 
