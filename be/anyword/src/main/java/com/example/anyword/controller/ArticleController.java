@@ -42,6 +42,7 @@ public class ArticleController {
     this.articleService = articleService;
   }
 
+  @Authable
   @PostMapping
   public ResponseEntity<BaseResponseDto<PostArticleResponseDto>> createArticle(
       @Valid @RequestBody PostArticleRequestDto request, HttpSession session){
