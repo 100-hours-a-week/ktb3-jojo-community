@@ -7,6 +7,7 @@ import static com.example.anyword.shared.constants.ResponseMessage.COMMENT_UPDAT
 
 import com.example.anyword.dto.BaseResponseDto;
 import com.example.anyword.dto.comment.CommentRequestDto;
+import com.example.anyword.dto.comment.CreateCommentResponseDto;
 import com.example.anyword.dto.comment.GetCommentListResponseDto;
 import com.example.anyword.service.CommentService;
 import com.example.anyword.service.UserService;
@@ -49,28 +50,28 @@ public class CommentController {
 
 
   @PostMapping("/{articleId}")
-  public ResponseEntity<BaseResponseDto<?>> createComment(
+  public ResponseEntity<BaseResponseDto<CreateCommentResponseDto>> createComment(
       HttpSession session,
       @PathVariable Long articleId,
       @Valid @RequestBody CommentRequestDto request
       ) {
     Long userId = userService.getUserIdFromSession(session);
-    commentService.createComment(articleId, userId, request);
+    CreateCommentResponseDto response = commentService.createComment(articleId, userId, request);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDto<>(COMMENT_CREATED_SUCCESS));
+    return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDto<>(COMMENT_CREATED_SUCCESS, response));
   }
 
 
   @PutMapping("/{commentId}")
-  public ResponseEntity<BaseResponseDto<?>> updateComment(
+  public ResponseEntity<BaseResponseDto<CreateCommentResponseDto>> updateComment(
       HttpSession session,
       @PathVariable Long commentId,
       @Valid @RequestBody CommentRequestDto request) {
 
     Long userId = userService.getUserIdFromSession(session);
 
-    commentService.updateComment(commentId, userId, request);
-    return ResponseEntity.ok(new BaseResponseDto<>(COMMENT_UPDATED_SUCCESS));
+    CreateCommentResponseDto response = commentService.updateComment(commentId, userId, request);
+    return ResponseEntity.ok(new BaseResponseDto<>(COMMENT_UPDATED_SUCCESS, response));
   }
 
   @DeleteMapping("/{commentId}")
