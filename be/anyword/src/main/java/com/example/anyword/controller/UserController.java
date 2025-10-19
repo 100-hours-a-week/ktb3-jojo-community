@@ -6,6 +6,7 @@ import static com.example.anyword.shared.constants.ResponseMessage.SESSION_EXPIR
 import static com.example.anyword.shared.constants.ResponseMessage.SIGNUP_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.SUCCESS;
 
+import com.example.anyword.aop.Authable;
 import com.example.anyword.dto.BaseResponseDto;
 import com.example.anyword.dto.user.request.LoginRequestDto;
 import com.example.anyword.dto.user.response.UserResponseDto;
@@ -61,6 +62,7 @@ public class UserController {
     return ResponseEntity.ok(new BaseResponseDto<>(LOGIN_SUCCESS, user));
   }
 
+  @Authable
   @GetMapping("/current")
   public ResponseEntity<BaseResponseDto<UserResponseDto>> currentUser(HttpSession session){
     UserResponseDto user = service.getCurrentUser(session);
@@ -68,6 +70,7 @@ public class UserController {
     return ResponseEntity.ok(new BaseResponseDto<>(SUCCESS, user));
   }
 
+  @Authable
   @PutMapping("/current")
   public ResponseEntity<BaseResponseDto<UserResponseDto>> patchUserInfo(@Valid @RequestBody PutUserRequestDto request,
       HttpSession session){
@@ -76,7 +79,7 @@ public class UserController {
     return ResponseEntity.ok(new BaseResponseDto<>(SUCCESS, updatedUser));
   }
 
-
+  @Authable
   @PostMapping("/current/logout")
   public ResponseEntity<?> logout(HttpSession session){
     try{
@@ -87,6 +90,7 @@ public class UserController {
     return ResponseEntity.ok(new BaseResponseDto<>(LOGOUT_SUCCESS));
   }
 
+  @Authable
   @DeleteMapping("/current/signout")
   public ResponseEntity<?> signOut(HttpSession session){
     service.signout(session);

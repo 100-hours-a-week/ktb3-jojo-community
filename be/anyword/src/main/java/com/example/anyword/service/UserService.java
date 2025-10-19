@@ -1,10 +1,10 @@
 package com.example.anyword.service;
 
+import static com.example.anyword.shared.constants.Key.SESSION_USER_ID;
 import static com.example.anyword.shared.constants.ResponseMessage.EMAIL_DUPLICATE;
 import static com.example.anyword.shared.constants.ResponseMessage.FAIL;
 import static com.example.anyword.shared.constants.ResponseMessage.NICKNAME_DUPLICATE;
 import static com.example.anyword.shared.constants.ResponseMessage.SESSION_EXPIRED;
-import static com.example.anyword.shared.constants.ResponseMessage.UNAUTHORIZED;
 import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
 import com.example.anyword.dto.article.AuthorInfo;
@@ -16,14 +16,11 @@ import com.example.anyword.dto.user.response.SignupResponseDto;
 import com.example.anyword.entity.UserEntity;
 import com.example.anyword.mapper.UserMapper;
 import com.example.anyword.repository.user.UserRepository;
-import com.example.anyword.shared.constants.Key;
 import com.example.anyword.shared.exception.BadRequestException;
 import com.example.anyword.shared.exception.ConflictException;
 import com.example.anyword.shared.exception.SessionExpiredException;
-import com.example.anyword.shared.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpSession;
 import java.util.Objects;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,13 +67,8 @@ public class UserService {
     return userMapper.toUserResponseDto(foundUser);
   }
 
-  public Long getUserIdFromSession(HttpSession session){
-    return Optional.ofNullable((Long) session.getAttribute(Key.SESSION_USER_ID)).orElseThrow(()->
-        new UnauthorizedException(UNAUTHORIZED));
-  }
-
   private UserEntity getUserFromSession(HttpSession session){
-    Long userId = this.getUserIdFromSession(session);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
 
     return userRepository.findById(userId).orElseThrow(()->
         new SessionExpiredException(SESSION_EXPIRED));
@@ -84,7 +76,6 @@ public class UserService {
 
   public UserResponseDto getCurrentUser(HttpSession session){
     UserEntity current = this.getUserFromSession(session);
-
     return userMapper.toUserResponseDto(current);
   }
 
@@ -125,7 +116,7 @@ public class UserService {
 
   @Transactional
   public void signout(HttpSession session){
-    Long userId = this.getUserIdFromSession(session);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
 
     if (!userRepository.deleteById(userId)){
       throw new BadRequestException(FAIL);

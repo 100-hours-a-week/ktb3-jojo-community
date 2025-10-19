@@ -1,16 +1,17 @@
 package com.example.anyword.controller;
 
+import static com.example.anyword.shared.constants.Key.SESSION_USER_ID;
 import static com.example.anyword.shared.constants.ResponseMessage.COMMENT_CREATED_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.COMMENT_DELETE_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.COMMENT_GET_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.COMMENT_UPDATED_SUCCESS;
 
+import com.example.anyword.aop.Authable;
 import com.example.anyword.dto.BaseResponseDto;
 import com.example.anyword.dto.comment.CommentRequestDto;
 import com.example.anyword.dto.comment.CreateCommentResponseDto;
 import com.example.anyword.dto.comment.GetCommentListResponseDto;
 import com.example.anyword.service.CommentService;
-import com.example.anyword.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -30,56 +31,58 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class CommentController {
   private final CommentService commentService;
-  private final UserService userService;
 
-  public CommentController(CommentService commentService, UserService userService) {
+  public CommentController(CommentService commentService) {
     this.commentService = commentService;
-    this.userService = userService;
   }
 
 
+  @Authable
   @GetMapping("/{articleId}")
   public ResponseEntity<BaseResponseDto<GetCommentListResponseDto>> getComments(
       HttpSession session,
       @PathVariable Long articleId) {
-    Long currentUserId = (Long) session.getAttribute("userId");
+    Long currentUserId = (Long) session.getAttribute(SESSION_USER_ID);
     GetCommentListResponseDto data = commentService.getCommentsList(articleId, currentUserId);
 
     return ResponseEntity.ok(new BaseResponseDto<>(COMMENT_GET_SUCCESS, data));
   }
 
 
+  @Authable
   @PostMapping("/{articleId}")
   public ResponseEntity<BaseResponseDto<CreateCommentResponseDto>> createComment(
       HttpSession session,
       @PathVariable Long articleId,
       @Valid @RequestBody CommentRequestDto request
       ) {
-    Long userId = userService.getUserIdFromSession(session);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
     CreateCommentResponseDto response = commentService.createComment(articleId, userId, request);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDto<>(COMMENT_CREATED_SUCCESS, response));
   }
 
 
+  @Authable
   @PutMapping("/{commentId}")
   public ResponseEntity<BaseResponseDto<CreateCommentResponseDto>> updateComment(
       HttpSession session,
       @PathVariable Long commentId,
       @Valid @RequestBody CommentRequestDto request) {
 
-    Long userId = userService.getUserIdFromSession(session);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
 
     CreateCommentResponseDto response = commentService.updateComment(commentId, userId, request);
     return ResponseEntity.ok(new BaseResponseDto<>(COMMENT_UPDATED_SUCCESS, response));
   }
 
+  @Authable
   @DeleteMapping("/{commentId}")
   public ResponseEntity<BaseResponseDto<?>> deleteComment(
       HttpSession session,
       @PathVariable Long commentId) {
 
-    Long userId = userService.getUserIdFromSession(session);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
 
     commentService.deleteComment(commentId, userId);
 
