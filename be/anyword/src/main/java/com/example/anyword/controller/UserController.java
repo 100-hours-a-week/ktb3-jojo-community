@@ -6,14 +6,13 @@ import static com.example.anyword.shared.constants.ResponseMessage.SESSION_EXPIR
 import static com.example.anyword.shared.constants.ResponseMessage.SIGNUP_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.SUCCESS;
 
+import com.example.anyword.aop.Authable;
 import com.example.anyword.dto.BaseResponseDto;
 import com.example.anyword.dto.user.request.LoginRequestDto;
-import com.example.anyword.dto.user.response.LoginResponseDto;
+import com.example.anyword.dto.user.response.UserResponseDto;
 import com.example.anyword.dto.user.request.PutUserRequestDto;
 import com.example.anyword.dto.user.response.SignupResponseDto;
-import com.example.anyword.entity.UserEntity;
 import com.example.anyword.shared.constants.Key;
-import com.example.anyword.shared.constants.ResponseMessage;
 import com.example.anyword.dto.user.request.SignupRequestDto;
 import com.example.anyword.service.UserService;
 import com.example.anyword.shared.exception.SessionExpiredException;
@@ -46,42 +45,41 @@ public class UserController {
       @RequestBody SignupRequestDto request
   ){
 
-    UserEntity user = service.signup(request);
-    SignupResponseDto response = new SignupResponseDto(user.getId());
-
+    SignupResponseDto response = service.signup(request);
 
     return ResponseEntity.created(URI.create("api/user/current")).body(new BaseResponseDto<>(SIGNUP_SUCCESS, response));
   }
 
   @PostMapping("/login")
-  public ResponseEntity<BaseResponseDto<LoginResponseDto>> login(
+  public ResponseEntity<BaseResponseDto<UserResponseDto>> login(
     @Valid
     @RequestBody LoginRequestDto request,
       HttpSession session
   ){
-    UserEntity user = service.login(request);
+    UserResponseDto user = service.login(request);
     session.setAttribute(Key.SESSION_USER_ID, user.getId());
-    LoginResponseDto response = new LoginResponseDto(user);
 
-    return ResponseEntity.ok(new BaseResponseDto<>(LOGIN_SUCCESS, response));
+    return ResponseEntity.ok(new BaseResponseDto<>(LOGIN_SUCCESS, user));
   }
 
+  @Authable
   @GetMapping("/current")
-  public ResponseEntity<?> currentUser(HttpSession session){
-    UserEntity user = service.getUserFromSession(session);
+  public ResponseEntity<BaseResponseDto<UserResponseDto>> currentUser(HttpSession session){
+    UserResponseDto user = service.getCurrentUser(session);
 
     return ResponseEntity.ok(new BaseResponseDto<>(SUCCESS, user));
   }
 
+  @Authable
   @PutMapping("/current")
-  public ResponseEntity<?> patchUserInfo(@Valid @RequestBody PutUserRequestDto request,
+  public ResponseEntity<BaseResponseDto<UserResponseDto>> patchUserInfo(@Valid @RequestBody PutUserRequestDto request,
       HttpSession session){
-    UserEntity updatedUser = service.putUser(session, request);
+    UserResponseDto updatedUser = service.putUser(session, request);
 
     return ResponseEntity.ok(new BaseResponseDto<>(SUCCESS, updatedUser));
   }
 
-
+  @Authable
   @PostMapping("/current/logout")
   public ResponseEntity<?> logout(HttpSession session){
     try{
@@ -92,6 +90,7 @@ public class UserController {
     return ResponseEntity.ok(new BaseResponseDto<>(LOGOUT_SUCCESS));
   }
 
+  @Authable
   @DeleteMapping("/current/signout")
   public ResponseEntity<?> signOut(HttpSession session){
     service.signout(session);

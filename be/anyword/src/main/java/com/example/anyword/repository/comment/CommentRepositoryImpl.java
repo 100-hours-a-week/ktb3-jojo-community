@@ -1,17 +1,19 @@
-package com.example.anyword.repository;
+package com.example.anyword.repository.comment;
 
 import com.example.anyword.entity.CommentEntity;
+import com.example.anyword.repository.BaseRepository;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CommentRepository extends BaseRepository<CommentEntity>{
-  public CommentRepository(){
+public class CommentRepositoryImpl extends BaseRepository<CommentEntity> implements CommentRepository{
+  public CommentRepositoryImpl(){
     super();
   }
 
+  @Override
   public long countByArticleId(Long articleId) {
     return store.values()
         .stream()
@@ -19,6 +21,7 @@ public class CommentRepository extends BaseRepository<CommentEntity>{
         .count();
   }
 
+  @Override
   public List<CommentEntity> findAllByArticleIdOrderByCreatedAtDesc(Long articleId) {
     return store.values()
         .stream()
@@ -27,3 +30,4 @@ public class CommentRepository extends BaseRepository<CommentEntity>{
         .collect(Collectors.toList());
   }
 }
+

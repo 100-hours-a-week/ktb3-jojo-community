@@ -17,14 +17,17 @@ import com.example.anyword.dto.article.response.GetArticleListResponseDto;
 import com.example.anyword.dto.article.response.GetArticleResponseDto;
 import com.example.anyword.dto.article.request.PostArticleRequestDto;
 import com.example.anyword.dto.article.request.PutArticleRequestDto;
+import com.example.anyword.dto.article.response.PostArticleResponseDto;
+import com.example.anyword.dto.article.response.PutArticleResponseDto;
 import com.example.anyword.entity.ArticleEntity;
 import com.example.anyword.entity.ArticleImageEntity;
 import com.example.anyword.entity.UserEntity;
-import com.example.anyword.repository.ArticleImageRepository;
-import com.example.anyword.repository.ArticleRepository;
-import com.example.anyword.repository.CommentRepository;
-import com.example.anyword.repository.LikeArticleRepository;
-import com.example.anyword.repository.UserRepository;
+import com.example.anyword.mapper.ArticleMapper;
+import com.example.anyword.repository.articleImage.ArticleImageRepository;
+import com.example.anyword.repository.article.ArticleRepository;
+import com.example.anyword.repository.comment.CommentRepository;
+import com.example.anyword.repository.like.LikeArticleRepository;
+import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.exception.ForbiddenException;
 import com.example.anyword.shared.exception.NotFoundException;
 import java.util.List;
@@ -40,21 +43,21 @@ public class ArticleService {
   private final CommentRepository commentRepository;
 
   private final UserRepository userRepository;
-
+  private final ArticleMapper articleMapper;
 
   public ArticleService(ArticleRepository articleRepository, ArticleImageRepository imageRepository,
       LikeArticleRepository likeRepository, CommentRepository commentRepository,
-      UserRepository userRepository) {
+      UserRepository userRepository, ArticleMapper articleMapper) {
     this.articleRepository = articleRepository;
     this.imageRepository = imageRepository;
     this.likeRepository = likeRepository;
     this.commentRepository = commentRepository;
     this.userRepository = userRepository;
-
+    this.articleMapper = articleMapper;
   }
 
   @Transactional
-  public Long createArticle(Long userId, PostArticleRequestDto request){
+  public PostArticleResponseDto createArticle(Long userId, PostArticleRequestDto request){
     ArticleEntity article = request.toEntity(userId);
     ArticleEntity saved = articleRepository.save(article);
 
@@ -65,11 +68,11 @@ public class ArticleService {
       }
     }
 
-    return saved.getId();
+    return articleMapper.toPostArticleResponse(saved);
   }
 
   @Transactional
-  public Long putArticle(Long userId, Long articleId, PutArticleRequestDto request) {
+  public PutArticleResponseDto putArticle(Long userId, Long articleId, PutArticleRequestDto request) {
     ArticleEntity article = findArticle(articleId);
 
     if (!article.getUserId().equals(userId)) {
@@ -93,7 +96,7 @@ public class ArticleService {
 
     }
 
-    return saved.getId();
+    return articleMapper.toPutArticleResponse(saved);
   }
 
   @Transactional
@@ -140,7 +143,9 @@ public class ArticleService {
     List<String> imageUrls = imageRepository.findByArticleId(articleId);
 
     //TODO: 다른 부분도 정적 팩토리 메서드 패턴으로 변경
-    return GetArticleResponseDto.from(article, authorInfo, status, likedByMe, isMyContents, imageUrls);
+    return articleMapper.toGetArticleResponse(
+        article, authorInfo, status, likedByMe, isMyContents, imageUrls
+    );
   }
 
 
@@ -173,7 +178,7 @@ public class ArticleService {
         validPageSize
     );
 
-    return new GetArticleListResponseDto(items, pageInfo);
+    return articleMapper.toGetArticleListResponse(items, pageInfo);
   }
 
   private ArticleListItem convertToListItemDto(ArticleEntity article) {
@@ -190,8 +195,5 @@ public class ArticleService {
 
     return ArticleListItem.from(article, authorInfo, status);
   }
-
-
-
 
 }

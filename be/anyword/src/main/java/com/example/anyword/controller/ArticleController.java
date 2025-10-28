@@ -1,10 +1,12 @@
 package com.example.anyword.controller;
 
+import static com.example.anyword.shared.constants.Key.SESSION_USER_ID;
 import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_CREATE_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_GET_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_UPDATE_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.SUCCESS;
 
+import com.example.anyword.aop.Authable;
 import com.example.anyword.dto.BaseResponseDto;
 import com.example.anyword.dto.article.response.GetArticleListResponseDto;
 import com.example.anyword.dto.article.response.GetArticleResponseDto;
@@ -13,7 +15,6 @@ import com.example.anyword.dto.article.response.PostArticleResponseDto;
 import com.example.anyword.dto.article.request.PutArticleRequestDto;
 import com.example.anyword.dto.article.response.PutArticleResponseDto;
 import com.example.anyword.service.ArticleService;
-import com.example.anyword.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -36,23 +37,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class ArticleController {
 
   private final ArticleService articleService;
-  private final UserService userService;
 
-  public ArticleController(ArticleService articleService,
-      UserService userService) {
+  public ArticleController(ArticleService articleService) {
     this.articleService = articleService;
-    this.userService = userService;
   }
 
+  @Authable
   @PostMapping
   public ResponseEntity<BaseResponseDto<PostArticleResponseDto>> createArticle(
       @Valid @RequestBody PostArticleRequestDto request, HttpSession session){
-    Long userId = userService.getUserIdFromSession(session);
-    Long articleId = articleService.createArticle(userId, request);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
+    PostArticleResponseDto response = articleService.createArticle(userId, request);
 
     return ResponseEntity
-        .created(URI.create("/api/article/"+articleId))
-        .body(new BaseResponseDto<>(ARTICLE_CREATE_SUCCESS, new PostArticleResponseDto(articleId)));
+        .created(URI.create("/api/article/"+response.getArticleId()))
+        .body(new BaseResponseDto<>(ARTICLE_CREATE_SUCCESS, response));
   }
 
   @GetMapping("/{articleId}")
@@ -60,7 +59,7 @@ public class ArticleController {
       HttpSession session,
       @PathVariable Long articleId) {
 
-    Long userId = userService.getUserIdFromSession(session);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
     GetArticleResponseDto data = articleService.getArticle(articleId, userId);
 
     return ResponseEntity.ok(new BaseResponseDto<>(ARTICLE_GET_SUCCESS, data));
@@ -84,23 +83,25 @@ public class ArticleController {
     return ResponseEntity.ok(new BaseResponseDto<>(SUCCESS, data));
   }
 
+  @Authable
   @PutMapping("/{articleId}")
-  public ResponseEntity<BaseResponseDto<PutArticleResponseDto>> createArticle(
+  public ResponseEntity<BaseResponseDto<PutArticleResponseDto>> putArticle(
       @Valid @RequestBody PutArticleRequestDto request,
       HttpSession session,
       @PathVariable Long articleId){
-    Long userId = userService.getUserIdFromSession(session);
-    articleService.putArticle(userId, articleId, request);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
+    PutArticleResponseDto response = articleService.putArticle(userId, articleId, request);
 
-    return ResponseEntity.ok(new BaseResponseDto<>(ARTICLE_UPDATE_SUCCESS, new PutArticleResponseDto(articleId)));
+    return ResponseEntity.ok(new BaseResponseDto<>(ARTICLE_UPDATE_SUCCESS, response));
   }
 
+  @Authable
   @DeleteMapping("/{articleId}")
   public ResponseEntity<?> deleteArticle(
       HttpSession session,
       @PathVariable Long articleId) {
 
-    Long userId = userService.getUserIdFromSession(session);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
     articleService.deleteArticle(userId, articleId);
 
     return ResponseEntity.noContent().build();

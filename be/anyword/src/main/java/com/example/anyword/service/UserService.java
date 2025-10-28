@@ -1,42 +1,44 @@
 package com.example.anyword.service;
 
+import static com.example.anyword.shared.constants.Key.SESSION_USER_ID;
 import static com.example.anyword.shared.constants.ResponseMessage.EMAIL_DUPLICATE;
 import static com.example.anyword.shared.constants.ResponseMessage.FAIL;
 import static com.example.anyword.shared.constants.ResponseMessage.NICKNAME_DUPLICATE;
 import static com.example.anyword.shared.constants.ResponseMessage.SESSION_EXPIRED;
-import static com.example.anyword.shared.constants.ResponseMessage.UNAUTHORIZED;
 import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
 import com.example.anyword.dto.article.AuthorInfo;
 import com.example.anyword.dto.user.request.PutUserRequestDto;
 import com.example.anyword.dto.user.request.SignupRequestDto;
 import com.example.anyword.dto.user.request.LoginRequestDto;
+import com.example.anyword.dto.user.response.UserResponseDto;
+import com.example.anyword.dto.user.response.SignupResponseDto;
 import com.example.anyword.entity.UserEntity;
-import com.example.anyword.repository.UserRepository;
-import com.example.anyword.shared.constants.Key;
+import com.example.anyword.mapper.UserMapper;
+import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.exception.BadRequestException;
 import com.example.anyword.shared.exception.ConflictException;
 import com.example.anyword.shared.exception.SessionExpiredException;
-import com.example.anyword.shared.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpSession;
 import java.util.Objects;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
   private final UserRepository userRepository;
+  private final UserMapper userMapper;
 
-  public UserService(UserRepository userRepository) {
+  public UserService(UserRepository userRepository, UserMapper userMapper) {
     this.userRepository = userRepository;
+    this.userMapper = userMapper;
   }
 
   /**
    * 회원가입 로직 - service layer 에서 비즈니스 로직 검증
    */
   @Transactional
-  public UserEntity signup(SignupRequestDto dto){ //dto 로 변경 ...?
+  public SignupResponseDto signup(SignupRequestDto dto){ //dto 로 변경 ...?
     if (userRepository.isEmailExist(dto.getEmail())){
       throw new ConflictException(EMAIL_DUPLICATE);
     }
@@ -46,33 +48,38 @@ public class UserService {
     }
 
     //TODO: 비밀번호 해쉬 후 넘기기
-    UserEntity user = new UserEntity(dto.getEmail(), dto.getPassword(), dto.getNickname(), dto.getProfileImageUrl());
+    UserEntity saved = userRepository.save(new UserEntity(
+        dto.getEmail(), dto.getPassword(), dto.getNickname(), dto.getProfileImageUrl()));
 
-    return userRepository.save(user);
+    return userMapper.toSignupResponseDto(saved);
+  }
+
+  private boolean verifyPassword(String dtoPassword, String password){
+    return dtoPassword.equals(password);
   }
 
 
-  public UserEntity login(LoginRequestDto dto){
+  public UserResponseDto login(LoginRequestDto dto){
     UserEntity foundUser = userRepository.findByEmail(dto.getEmail()).orElseThrow(()->
         new BadRequestException(USER_NOT_FOUND));
 
-    if (!dto.verifyPassword(foundUser.getPassword())){
+    if (!this.verifyPassword(dto.getPassword(), foundUser.getPassword())){
       throw new BadRequestException(USER_NOT_FOUND);
     }
 
-    return foundUser;
+    return userMapper.toUserResponseDto(foundUser);
   }
 
-  public Long getUserIdFromSession(HttpSession session){
-    return Optional.ofNullable((Long) session.getAttribute(Key.SESSION_USER_ID)).orElseThrow(()->
-        new UnauthorizedException(UNAUTHORIZED));
-  }
-
-  public UserEntity getUserFromSession(HttpSession session){
-    Long userId = this.getUserIdFromSession(session);
+  private UserEntity getUserFromSession(HttpSession session){
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
 
     return userRepository.findById(userId).orElseThrow(()->
         new SessionExpiredException(SESSION_EXPIRED));
+  }
+
+  public UserResponseDto getCurrentUser(HttpSession session){
+    UserEntity current = this.getUserFromSession(session);
+    return userMapper.toUserResponseDto(current);
   }
 
   /**
@@ -88,8 +95,8 @@ public class UserService {
   }
 
   @Transactional
-  public UserEntity putUser(HttpSession session, PutUserRequestDto request){
-    UserEntity original = getUserFromSession(session);
+  public UserResponseDto putUser(HttpSession session, PutUserRequestDto request){
+    UserEntity original = this.getUserFromSession(session);
 
     String newEmail = merge(request.getEmail(), original.getEmail());
     String newNickname = merge(request.getNickname(), original.getNickname());
@@ -106,13 +113,13 @@ public class UserService {
 
     UserEntity updated = UserEntity.copyWith(original, newEmail, newPassword, newNickname, newProfile);
 
-    return userRepository.save(updated);
+    return userMapper.toUserResponseDto(userRepository.save(updated));
   }
 
 
   @Transactional
   public void signout(HttpSession session){
-    Long userId = this.getUserIdFromSession(session);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
 
     if (!userRepository.deleteById(userId)){
       throw new BadRequestException(FAIL);

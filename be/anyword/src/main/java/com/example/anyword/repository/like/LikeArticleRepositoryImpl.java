@@ -1,28 +1,30 @@
-package com.example.anyword.repository;
+package com.example.anyword.repository.like;
 
 import com.example.anyword.entity.LikeArticleEntity;
-import com.example.anyword.shared.constants.ResponseMessage;
-import com.example.anyword.shared.exception.ConflictException;
+import com.example.anyword.repository.BaseRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class LikeArticleRepository extends BaseRepository<LikeArticleEntity>{
-  public LikeArticleRepository(){
+public class LikeArticleRepositoryImpl extends BaseRepository<LikeArticleEntity> implements LikeArticleRepository{
+  public LikeArticleRepositoryImpl(){
     super();
   }
 
+  @Override
   public int countByArticleId(Long articleId) {
     return (int) store.values().stream()
         .filter(e -> articleId.equals(e.getArticleId()))
         .count();
   }
 
+  @Override
   public boolean existsByArticleIdAndUserId(Long articleId, Long currentUserId) {
     return store.values().stream()
         .anyMatch(e -> articleId.equals(e.getArticleId())
             && currentUserId.equals(e.getUserId()));
   }
 
+  @Override
   public boolean deleteByArticleIdAndUserId(Long articleId, Long userId) {
     Long keyToRemove = null;
 

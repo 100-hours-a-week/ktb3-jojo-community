@@ -24,7 +24,23 @@ public class CommentEntity implements BaseEntity<Long> {
     this.updatedAt = LocalDateTime.now();
   }
 
+  public CommentEntity(Long articleId, Long userId, String contents, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    this.articleId = articleId;
+    this.userId = userId;
+    this.contents = contents;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+  }
 
+  public static CommentEntity copyWith(CommentEntity original, String newContent){
+    return new CommentEntity(
+        original.getId(),
+        original.getUserId(),
+        newContent,
+        original.getCreatedAt(),
+        LocalDateTime.now()
+    );
+  }
 
 
   @Override

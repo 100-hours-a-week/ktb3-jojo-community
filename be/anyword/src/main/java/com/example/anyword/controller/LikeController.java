@@ -1,10 +1,11 @@
 package com.example.anyword.controller;
 
+import static com.example.anyword.shared.constants.Key.SESSION_USER_ID;
 import static com.example.anyword.shared.constants.ResponseMessage.SUCCESS;
 
+import com.example.anyword.aop.Authable;
 import com.example.anyword.dto.BaseResponseDto;
 import com.example.anyword.service.LikeService;
-import com.example.anyword.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class LikeController {
 
   private final LikeService likeService;
-  private final UserService userService;
 
-  public LikeController(LikeService likeService, UserService userService) {
+  public LikeController(LikeService likeService) {
     this.likeService = likeService;
-    this.userService = userService;
   }
 
+  @Authable
   @PostMapping("/{articleId}")
   public ResponseEntity<BaseResponseDto<?>> addLike(
       HttpSession session,
       @PathVariable Long articleId
   ){
-    Long userId = userService.getUserIdFromSession(session);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
 
     likeService.addLike(articleId, userId);
 
@@ -39,10 +39,11 @@ public class LikeController {
   }
 
 
+  @Authable
   @DeleteMapping("/{articleId}")
   public ResponseEntity<BaseResponseDto<?>> removeLike(HttpSession session,
       @PathVariable Long articleId){
-    Long userId = userService.getUserIdFromSession(session);
+    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
 
     likeService.removeLike(articleId, userId);
     

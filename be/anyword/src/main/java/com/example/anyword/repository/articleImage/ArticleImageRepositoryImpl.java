@@ -1,12 +1,14 @@
-package com.example.anyword.repository;
+package com.example.anyword.repository.articleImage;
 
 import com.example.anyword.entity.ArticleImageEntity;
+import com.example.anyword.repository.BaseRepository;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
+
 @Repository
-public class ArticleImageRepository extends BaseRepository<ArticleImageEntity>{
-  public ArticleImageRepository(){
+public class ArticleImageRepositoryImpl extends BaseRepository<ArticleImageEntity> implements ArticleImageRepository{
+  public ArticleImageRepositoryImpl(){
     super();
   }
 
@@ -14,6 +16,7 @@ public class ArticleImageRepository extends BaseRepository<ArticleImageEntity>{
   /**
    * article 의 모든 이미지 list로
    */
+  @Override
   public List<String> findByArticleId(Long articleId){
     return store.values()
         .stream()
@@ -25,6 +28,7 @@ public class ArticleImageRepository extends BaseRepository<ArticleImageEntity>{
   /**
    * 특정 article의 모든 이미지 삭제
    */
+  @Override
   public int deleteByArticleId(Long articleId) {
     List<Long> imageIds = store.values().stream()
         .filter(image -> image.getArticleId().equals(articleId))
@@ -37,3 +41,4 @@ public class ArticleImageRepository extends BaseRepository<ArticleImageEntity>{
 
   }
 }
+

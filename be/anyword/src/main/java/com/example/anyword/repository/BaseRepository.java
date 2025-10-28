@@ -2,24 +2,25 @@ package com.example.anyword.repository;
 
 import com.example.anyword.entity.BaseEntity;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class BaseRepository<T extends BaseEntity<Long>> {
-  protected final Map<Long, T> store;
-  protected long sequence;
+  protected final ConcurrentMap<Long, T> store;
+  protected final AtomicLong sequence;
 
   public BaseRepository(){
-    this.store = new LinkedHashMap<>();
-    this.sequence = 0L;
+    this.store = new ConcurrentHashMap<>();
+    this.sequence = new AtomicLong(0L);
   }
 
   public T save(T entity){
     //post 시 할당
     if (entity.getId() == null) {
-      sequence++;
-      entity.setId(sequence);
+      long newId = sequence.incrementAndGet();
+      entity.setId(newId);
     }
 
     store.put(entity.getId(), entity);
