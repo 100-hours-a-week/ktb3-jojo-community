@@ -14,7 +14,6 @@ import com.example.anyword.repository.article.ArticleRepository;
 import com.example.anyword.repository.comment.CommentRepository;
 import com.example.anyword.shared.exception.ForbiddenException;
 import com.example.anyword.shared.exception.NotFoundException;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,20 +59,19 @@ public class CommentService {
     return commentMapper.toResponse(saved);
   }
 
+  @Transactional
   public CreateCommentResponseDto updateComment(Long commentId, Long userId, CommentRequestDto request) {
     CommentEntity comment = findComment(commentId);
     checkUserIdwithAuthorId(userId, comment.getUserId());
 
-    comment.setContents(request.getContent()); //TODO:불변성 지켜서 수정해보기
-    comment.setUpdatedAt(LocalDateTime.now());
-
-    CommentEntity saved = commentRepository.save(comment);
-
+    CommentEntity updated = CommentEntity.copyWith(comment, request.getContent());
+    CommentEntity saved = commentRepository.save(updated);
 
     return commentMapper.toResponse(saved);
   }
 
 
+  @Transactional
   public void deleteComment(Long commentId, Long userId) {
     CommentEntity comment = findComment(commentId);
     checkUserIdwithAuthorId(userId, comment.getUserId());
