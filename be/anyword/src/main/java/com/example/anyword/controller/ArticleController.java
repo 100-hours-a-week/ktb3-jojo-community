@@ -85,7 +85,7 @@ public class ArticleController {
 
   @Authable
   @PutMapping("/{articleId}")
-  public ResponseEntity<BaseResponseDto<PutArticleResponseDto>> createArticle(
+  public ResponseEntity<BaseResponseDto<PutArticleResponseDto>> putArticle(
       @Valid @RequestBody PutArticleRequestDto request,
       HttpSession session,
       @PathVariable Long articleId){

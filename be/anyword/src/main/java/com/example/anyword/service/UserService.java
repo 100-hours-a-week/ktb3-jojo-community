@@ -54,13 +54,16 @@ public class UserService {
     return userMapper.toSignupResponseDto(saved);
   }
 
+  private boolean verifyPassword(String dtoPassword, String password){
+    return dtoPassword.equals(password);
+  }
+
 
   public UserResponseDto login(LoginRequestDto dto){
     UserEntity foundUser = userRepository.findByEmail(dto.getEmail()).orElseThrow(()->
         new BadRequestException(USER_NOT_FOUND));
 
-    //TODO: verifyPassword entity 에서 이동
-    if (!dto.verifyPassword(foundUser.getPassword())){
+    if (!this.verifyPassword(dto.getPassword(), foundUser.getPassword())){
       throw new BadRequestException(USER_NOT_FOUND);
     }
 
