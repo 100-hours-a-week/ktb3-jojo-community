@@ -80,6 +80,7 @@ public class CommentService {
   }
 
 
+  @Transactional(readOnly = true)
   public GetCommentListResponseDto getCommentsList(Long articleId, Long currentUserId) {
     findArticle(articleId);
     List<CommentEntity> comments = commentRepository.findAllByArticleIdOrderByCreatedAtDesc(articleId);

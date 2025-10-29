@@ -151,6 +151,7 @@ public class ArticleService {
   /**
    * 게시글 목록 조회
    */
+  @Transactional(readOnly = true)
   public GetArticleListResponseDto getArticleList(Integer currentPage, Integer pageSize, String sort) {
     int validPage = validatePage(currentPage);
     int validPageSize = validatePageSize(pageSize);

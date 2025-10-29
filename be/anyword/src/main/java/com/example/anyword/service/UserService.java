@@ -59,6 +59,7 @@ public class UserService {
   }
 
 
+  @Transactional(readOnly = true)
   public UserResponseDto login(LoginRequestDto dto){
     UserEntity foundUser = userRepository.findByEmail(dto.getEmail()).orElseThrow(()->
         new BadRequestException(USER_NOT_FOUND));
@@ -128,6 +129,7 @@ public class UserService {
     session.invalidate();
   }
 
+  @Transactional(readOnly = true)
   public AuthorInfoDto UserIdToAuthorInfo(Long userId){
     UserEntity author = userRepository.findById(userId)
         .orElse(null); //탈퇴한 회원인 경우 exception 이 발생하면 안됨
