@@ -58,7 +58,7 @@ public class ArticleService {
 
   @Transactional
   public PostArticleResponseDto createArticle(Long userId, PostArticleRequestDto request){
-    ArticleEntity article = request.toEntity(userId);
+    ArticleEntity article = new ArticleEntity(userId, request.getTitle(), request.getContent());
     ArticleEntity saved = articleRepository.save(article);
 
     if (request.getImageUrls()!= null && !request.getImageUrls().isEmpty()){
