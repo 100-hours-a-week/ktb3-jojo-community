@@ -1,11 +1,26 @@
 package com.example.anyword.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Entity
+@Getter
 public class UserEntity implements BaseEntity<Long> {
+  @Setter
+  @Id
+  @GeneratedValue
   private Long id; //PK
 
   private final String email;
+
   private final String password; //해싱
+
   private final String nickname;
+
   private final String profileImageUrl;
 
   // 데이터 저장을 위한 생성자 (ID 제외)
@@ -22,34 +37,6 @@ public class UserEntity implements BaseEntity<Long> {
     this.password = password;
     this.nickname = nickname;
     this.profileImageUrl = profileImageUrl;
-  }
-
-
-  @Override
-  public Long getId() {
-    return id;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public String getNickname() {
-    return nickname;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public String getProfileImageUrl() {
-    return profileImageUrl;
-  }
-
-
-  @Override
-  public void setId(Long userId) {
-    this.id = userId;
   }
 
   //setter 사용 x, patch

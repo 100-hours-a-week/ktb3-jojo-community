@@ -1,14 +1,27 @@
 package com.example.anyword.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
+@Entity
+@Getter
 public class ArticleImageEntity implements BaseEntity<Long> {
+  @Setter
+  @Id
+  @GeneratedValue
   private Long id; //PK
 
   private final Long articleId; //FK
+
+  @Setter
   private String imageURL;
 
+  @Setter
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
 
@@ -16,40 +29,6 @@ public class ArticleImageEntity implements BaseEntity<Long> {
     this.articleId = articleId;
     this.imageURL = imageURL;
     this.createdAt = LocalDateTime.now();
-  }
-
-
-  @Override
-  public Long getId(){
-    return id;
-  }
-
-
-  public Long getArticleId() {
-    return articleId;
-  }
-
-
-  public String getImageUrl(){
-    return imageURL;
-  }
-
-  public LocalDateTime getCreatedAt(){
-    return createdAt;
-  }
-
-
-  @Override
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public void setImageURL(String imageURL) {
-    this.imageURL = imageURL;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
   }
 
 }

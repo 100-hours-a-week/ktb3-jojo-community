@@ -1,18 +1,32 @@
 package com.example.anyword.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
+@Entity
+@Getter
 public class CommentEntity implements BaseEntity<Long> {
-
+  @Setter
+  @Id
+  @GeneratedValue
   private Long id; //PK
 
   private final Long articleId; //FK
+
   private final Long userId; //FK
 
+  @Setter
   private String contents;
+
   @JsonFormat(timezone = "Asia/Seoul")
   private final LocalDateTime createdAt;
+
+  @Setter
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime updatedAt;
 
@@ -42,42 +56,4 @@ public class CommentEntity implements BaseEntity<Long> {
     );
   }
 
-
-  @Override
-  public Long getId() {
-    return id;
-  }
-
-  @Override
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Long getUserId() {
-    return userId;
-  }
-
-  public Long getArticleId() {
-    return articleId;
-  }
-
-  public String getContents() {
-    return contents;
-  }
-
-  public LocalDateTime getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setContents(String contents) {
-    this.contents = contents;
-  }
-
-  public void setUpdatedAt(LocalDateTime updatedAt) {
-    this.updatedAt = updatedAt;
-  }
 }

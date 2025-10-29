@@ -21,7 +21,7 @@ public class ArticleImageRepositoryImpl extends BaseRepository<ArticleImageEntit
     return store.values()
         .stream()
         .filter(image -> image.getArticleId().equals(articleId))
-        .map(ArticleImageEntity::getImageUrl)
+        .map(ArticleImageEntity::getImageURL)
         .toList();
   }
 
