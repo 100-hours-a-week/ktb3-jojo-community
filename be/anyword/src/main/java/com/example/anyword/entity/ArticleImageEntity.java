@@ -1,8 +1,10 @@
 package com.example.anyword.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -11,17 +13,18 @@ import lombok.Setter;
 @Entity
 @Getter
 public class ArticleImageEntity implements BaseEntity<Long> {
-  @Setter
-  @Id
-  @GeneratedValue
+  @Id @Setter
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "article_image_sequence")
+  @Column(unique = true, nullable = false)
   private Long id; //PK
 
+  @Column(nullable = false)
   private final Long articleId; //FK
 
-  @Setter
+  @Column(nullable = false) @Setter
   private String imageURL;
 
-  @Setter
+  @Column(nullable = false) @Setter
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
 

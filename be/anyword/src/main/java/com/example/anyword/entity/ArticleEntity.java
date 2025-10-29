@@ -1,8 +1,10 @@
 package com.example.anyword.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -13,26 +15,27 @@ import lombok.Setter;
 @Getter
 @Entity
 public class ArticleEntity implements BaseEntity<Long> {
-  @Setter
-  @Id
-  @GeneratedValue
+  @Id @Setter @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "article_sequence")
+  @Column(unique = true, nullable = false)
   private Long id; //PK - 초기에 null ..?
 
+  @Column(nullable = false)
   private Long userId; //FK
 
-  @Setter
+  @Column(nullable = false) @Setter
   private String title;
 
-  @Setter
+  @Column(nullable = false, columnDefinition = "TEXT") @Setter
   private String contents;
 
-  @Setter
+  @Column(nullable = false) @Setter
   private long viewCnt;
 
+  @Column(nullable = false)
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
 
-  @Setter
+  @Column(nullable = false) @Setter
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime updatedAt;
 

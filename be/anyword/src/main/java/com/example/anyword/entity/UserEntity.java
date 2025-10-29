@@ -1,7 +1,9 @@
 package com.example.anyword.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,17 +12,21 @@ import lombok.Setter;
 @Entity
 @Getter
 public class UserEntity implements BaseEntity<Long> {
-  @Setter
-  @Id
-  @GeneratedValue
+  @Id @Setter
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
+  @Column(unique = true, nullable = false)
   private Long id; //PK
 
+  @Column(unique = true, nullable = false)
   private final String email;
 
+  @Column(nullable = false)
   private final String password; //해싱
 
+  @Column(unique = true, nullable = false, length = 20)
   private final String nickname;
 
+  @Column(nullable = false, length = 512)
   private final String profileImageUrl;
 
   // 데이터 저장을 위한 생성자 (ID 제외)
