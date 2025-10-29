@@ -1,14 +1,14 @@
 package com.example.anyword.dto.article;
 
-public class ArticleStatusInfo {
+public class ArticleStatusInfoDto {
 
   private long likes;
   private long comments;
   private long views;
 
-  public ArticleStatusInfo(){};
+  public ArticleStatusInfoDto(){};
 
-  public ArticleStatusInfo(long likes, long comments, long views) {
+  public ArticleStatusInfoDto(long likes, long comments, long views) {
     this.likes = likes;
     this.comments = comments;
     this.views = views;

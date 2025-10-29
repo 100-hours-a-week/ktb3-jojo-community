@@ -1,19 +1,19 @@
 package com.example.anyword.dto.comment;
 
-import com.example.anyword.dto.article.AuthorInfo;
+import com.example.anyword.dto.article.AuthorInfoDto;
 import com.example.anyword.entity.CommentEntity;
 import java.time.LocalDateTime;
 
-public class CommentItem {
+public class CommentItemDto {
   private Long commentId;
   private String content;
-  private AuthorInfo author;
+  private AuthorInfoDto author;
   private boolean editable;
   private LocalDateTime createdAt;
 
-  public CommentItem() {}
+  public CommentItemDto() {}
 
-  public CommentItem(Long commentId, String content, AuthorInfo author, boolean editable, LocalDateTime createdAt){
+  public CommentItemDto(Long commentId, String content, AuthorInfoDto author, boolean editable, LocalDateTime createdAt){
     this.commentId = commentId;
     this.content = content;
     this.author = author;
@@ -21,8 +21,8 @@ public class CommentItem {
     this.createdAt = createdAt;
   };
 
-  public static CommentItem from(CommentEntity comment, AuthorInfo author, boolean editable, LocalDateTime createdAt) {
-    return new CommentItem(
+  public static CommentItemDto from(CommentEntity comment, AuthorInfoDto author, boolean editable, LocalDateTime createdAt) {
+    return new CommentItemDto(
         comment.getId(),
         comment.getContents(),
         author,
@@ -47,11 +47,11 @@ public class CommentItem {
     this.content = content;
   }
 
-  public AuthorInfo getAuthor() {
+  public AuthorInfoDto getAuthor() {
     return author;
   }
 
-  public void setAuthor(AuthorInfo author) {
+  public void setAuthor(AuthorInfoDto author) {
     this.author = author;
   }
 

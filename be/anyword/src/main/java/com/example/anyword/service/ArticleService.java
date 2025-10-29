@@ -9,10 +9,10 @@ import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_NOT_F
 import static com.example.anyword.shared.constants.ResponseMessage.FORBIDDEN;
 import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
-import com.example.anyword.dto.article.ArticleListItem;
-import com.example.anyword.dto.article.ArticleStatusInfo;
-import com.example.anyword.dto.article.AuthorInfo;
-import com.example.anyword.dto.article.PageInfo;
+import com.example.anyword.dto.article.ArticleListItemDto;
+import com.example.anyword.dto.article.ArticleStatusInfoDto;
+import com.example.anyword.dto.article.AuthorInfoDto;
+import com.example.anyword.dto.article.PageInfoDto;
 import com.example.anyword.dto.article.response.GetArticleListResponseDto;
 import com.example.anyword.dto.article.response.GetArticleResponseDto;
 import com.example.anyword.dto.article.request.PostArticleRequestDto;
@@ -118,7 +118,7 @@ public class ArticleService {
   }
 
 
-  @Transactional
+  @Transactional(readOnly = true)
   public GetArticleResponseDto getArticle(Long articleId, Long currentUserId) {
     ArticleEntity article = articleRepository.findById(articleId)
         .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
@@ -128,12 +128,12 @@ public class ArticleService {
      UserEntity author = userRepository.findById(article.getUserId())
          .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 
-     AuthorInfo authorInfo = AuthorInfo.from(author);
+     AuthorInfoDto authorInfoDto = AuthorInfoDto.from(author);
 
      long likesCount = likeRepository.countByArticleId(articleId);
      long commentsCount = commentRepository.countByArticleId(articleId);
 
-    ArticleStatusInfo status = new ArticleStatusInfo(likesCount, commentsCount, article.getViewCnt());
+    ArticleStatusInfoDto status = new ArticleStatusInfoDto(likesCount, commentsCount, article.getViewCnt());
 
     boolean likedByMe = (currentUserId != null)
         && likeRepository.existsByArticleIdAndUserId(articleId, currentUserId);
@@ -142,9 +142,8 @@ public class ArticleService {
 
     List<String> imageUrls = imageRepository.findByArticleId(articleId);
 
-    //TODO: 다른 부분도 정적 팩토리 메서드 패턴으로 변경
     return articleMapper.toGetArticleResponse(
-        article, authorInfo, status, likedByMe, isMyContents, imageUrls
+        article, authorInfoDto, status, likedByMe, isMyContents, imageUrls
     );
   }
 
@@ -165,35 +164,35 @@ public class ArticleService {
       articles = articleRepository.findAllByOrderByCreatedAtDesc(validPage - 1, validPageSize);
     }
 
-    List<ArticleListItem> items = articles.stream()
+    List<ArticleListItemDto> items = articles.stream()
         .map(this::convertToListItemDto)
         .toList();
 
     long totalCount = articleRepository.count();
     boolean hasNext = (long) validPage * validPageSize < totalCount;
 
-    PageInfo pageInfo = new PageInfo(
+    PageInfoDto pageInfoDto = new PageInfoDto(
         hasNext ? validPage + 1 : null,
         hasNext,
         validPageSize
     );
 
-    return articleMapper.toGetArticleListResponse(items, pageInfo);
+    return articleMapper.toGetArticleListResponse(items, pageInfoDto);
   }
 
-  private ArticleListItem convertToListItemDto(ArticleEntity article) {
+  private ArticleListItemDto convertToListItemDto(ArticleEntity article) {
     UserEntity author = userRepository.findById(article.getUserId())
         .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 
-    AuthorInfo authorInfo = new AuthorInfo(author.getId(), author.getNickname(),
+    AuthorInfoDto authorInfoDto = new AuthorInfoDto(author.getId(), author.getNickname(),
         author.getProfileImageUrl());
 
     long likesCount = likeRepository.countByArticleId(article.getId());
     long commentsCount = commentRepository.countByArticleId(article.getId());
 
-    ArticleStatusInfo status = new ArticleStatusInfo(likesCount, commentsCount, article.getViewCnt());
+    ArticleStatusInfoDto status = new ArticleStatusInfoDto(likesCount, commentsCount, article.getViewCnt());
 
-    return ArticleListItem.from(article, authorInfo, status);
+    return ArticleListItemDto.from(article, authorInfoDto, status);
   }
 
 }

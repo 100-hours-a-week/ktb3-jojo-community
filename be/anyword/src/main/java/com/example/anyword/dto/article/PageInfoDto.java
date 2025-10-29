@@ -1,14 +1,14 @@
 package com.example.anyword.dto.article;
 
-public class PageInfo {
+public class PageInfoDto {
 
   private Integer nextPage;
   private Boolean hasNext;
   private Integer pageSize;
 
-  public PageInfo() {};
+  public PageInfoDto() {};
 
-  public PageInfo(Integer nextPage, Boolean hasNext, Integer pageSize) {
+  public PageInfoDto(Integer nextPage, Boolean hasNext, Integer pageSize) {
     this.nextPage = nextPage;
     this.hasNext = hasNext;
     this.pageSize = pageSize;

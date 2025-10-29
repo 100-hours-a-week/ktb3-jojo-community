@@ -3,11 +3,11 @@ import java.util.List;
 
 public class GetCommentListResponseDto {
   private Long articleId;
-  private List<CommentItem> items;
+  private List<CommentItemDto> items;
 
   public GetCommentListResponseDto(){};
 
-  public GetCommentListResponseDto(Long postId, List<CommentItem> items) {
+  public GetCommentListResponseDto(Long postId, List<CommentItemDto> items) {
     this.articleId = postId;
     this.items = items;
   }
@@ -22,11 +22,11 @@ public class GetCommentListResponseDto {
     this.articleId = articleId;
   }
 
-  public List<CommentItem> getItems() {
+  public List<CommentItemDto> getItems() {
     return items;
   }
 
-  public void setItems(List<CommentItem> items) {
+  public void setItems(List<CommentItemDto> items) {
     this.items = items;
   }
 

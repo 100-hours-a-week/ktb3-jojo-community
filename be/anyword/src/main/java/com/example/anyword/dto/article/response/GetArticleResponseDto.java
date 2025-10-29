@@ -1,8 +1,7 @@
 package com.example.anyword.dto.article.response;
 
-import com.example.anyword.dto.article.ArticleStatusInfo;
-import com.example.anyword.dto.article.AuthorInfo;
-import com.example.anyword.entity.ArticleEntity;
+import com.example.anyword.dto.article.ArticleStatusInfoDto;
+import com.example.anyword.dto.article.AuthorInfoDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -17,9 +16,9 @@ public class GetArticleResponseDto {
 
   private String contents;
 
-  private AuthorInfo author;
+  private AuthorInfoDto author;
 
-  private ArticleStatusInfo status;
+  private ArticleStatusInfoDto status;
 
   private LocalDateTime createdAt;
 

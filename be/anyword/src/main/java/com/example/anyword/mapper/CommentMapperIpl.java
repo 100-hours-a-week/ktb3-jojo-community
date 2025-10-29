@@ -2,8 +2,8 @@ package com.example.anyword.mapper;
 
 import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
-import com.example.anyword.dto.article.AuthorInfo;
-import com.example.anyword.dto.comment.CommentItem;
+import com.example.anyword.dto.article.AuthorInfoDto;
+import com.example.anyword.dto.comment.CommentItemDto;
 import com.example.anyword.dto.comment.CreateCommentResponseDto;
 import com.example.anyword.dto.comment.GetCommentListResponseDto;
 import com.example.anyword.entity.CommentEntity;
@@ -26,11 +26,11 @@ public class CommentMapperIpl implements CommentMapper {
    * CommentEntity → CommentItem
    */
   @Override
-  public CommentItem toItem(CommentEntity comment, Long currentUserId) {
+  public CommentItemDto toItem(CommentEntity comment, Long currentUserId) {
     UserEntity author = userRepository.findById(comment.getUserId())
         .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 
-    AuthorInfo authorInfo = new AuthorInfo(
+    AuthorInfoDto authorInfoDto = new AuthorInfoDto(
         author.getId(),
         author.getNickname(),
         author.getProfileImageUrl()
@@ -38,10 +38,10 @@ public class CommentMapperIpl implements CommentMapper {
 
     boolean editable = currentUserId != null && currentUserId.equals(comment.getUserId());
 
-    return new CommentItem(
+    return new CommentItemDto(
         comment.getId(),
         comment.getContents(),
-        authorInfo,
+        authorInfoDto,
         editable,
         comment.getCreatedAt()
     );
@@ -51,7 +51,7 @@ public class CommentMapperIpl implements CommentMapper {
    * CommentEntity 리스트 → CommentItem 리스트
    */
   @Override
-  public List<CommentItem> toItems(List<CommentEntity> comments, Long currentUserId) {
+  public List<CommentItemDto> toItems(List<CommentEntity> comments, Long currentUserId) {
     return comments.stream()
         .map(comment -> toItem(comment, currentUserId))
         .collect(Collectors.toList());
@@ -70,7 +70,7 @@ public class CommentMapperIpl implements CommentMapper {
    */
   @Override
   public GetCommentListResponseDto toListResponse(Long articleId, List<CommentEntity> comments, Long currentUserId) {
-    List<CommentItem> items = toItems(comments, currentUserId);
+    List<CommentItemDto> items = toItems(comments, currentUserId);
     return new GetCommentListResponseDto(articleId, items);
   }
 

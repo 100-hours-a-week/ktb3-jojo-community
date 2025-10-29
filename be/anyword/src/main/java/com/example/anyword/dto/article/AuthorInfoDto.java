@@ -2,22 +2,22 @@ package com.example.anyword.dto.article;
 
 import com.example.anyword.entity.UserEntity;
 
-public class AuthorInfo {
+public class AuthorInfoDto {
   private Long id;
   private String nickname;
   private String profileImageUrl;
 
-  public AuthorInfo(){};
+  public AuthorInfoDto(){};
 
 
-  public AuthorInfo(Long id, String nickname, String profileImageUrl) {
+  public AuthorInfoDto(Long id, String nickname, String profileImageUrl) {
     this.id = id;
     this.nickname = nickname;
     this.profileImageUrl = profileImageUrl;
   }
 
-  public static AuthorInfo from(UserEntity user){
-    return new AuthorInfo(user.getId(), user.getNickname(),
+  public static AuthorInfoDto from(UserEntity user){
+    return new AuthorInfoDto(user.getId(), user.getNickname(),
         user.getProfileImageUrl());
   }
 

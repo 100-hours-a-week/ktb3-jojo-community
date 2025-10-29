@@ -7,7 +7,7 @@ import static com.example.anyword.shared.constants.ResponseMessage.NICKNAME_DUPL
 import static com.example.anyword.shared.constants.ResponseMessage.SESSION_EXPIRED;
 import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
-import com.example.anyword.dto.article.AuthorInfo;
+import com.example.anyword.dto.article.AuthorInfoDto;
 import com.example.anyword.dto.user.request.PutUserRequestDto;
 import com.example.anyword.dto.user.request.SignupRequestDto;
 import com.example.anyword.dto.user.request.LoginRequestDto;
@@ -128,13 +128,13 @@ public class UserService {
     session.invalidate();
   }
 
-  public AuthorInfo UserIdToAuthorInfo(Long userId){
+  public AuthorInfoDto UserIdToAuthorInfo(Long userId){
     UserEntity author = userRepository.findById(userId)
         .orElse(null); //탈퇴한 회원인 경우 exception 이 발생하면 안됨
     if (author == null){
-      return new AuthorInfo(0L, "탈퇴한 회원", ""); //TODO: 탈퇴한 회원 정보 상수화
+      return new AuthorInfoDto(0L, "탈퇴한 회원", ""); //TODO: 탈퇴한 회원 정보 상수화
     }
-    return new AuthorInfo(author.getId(), author.getNickname(), author.getProfileImageUrl());
+    return new AuthorInfoDto(author.getId(), author.getNickname(), author.getProfileImageUrl());
   }
 
 }

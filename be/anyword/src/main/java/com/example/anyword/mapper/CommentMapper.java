@@ -1,5 +1,5 @@
 package com.example.anyword.mapper;
-import com.example.anyword.dto.comment.CommentItem;
+import com.example.anyword.dto.comment.CommentItemDto;
 import com.example.anyword.dto.comment.CreateCommentResponseDto;
 import com.example.anyword.dto.comment.GetCommentListResponseDto;
 import com.example.anyword.entity.CommentEntity;
@@ -9,12 +9,12 @@ public interface CommentMapper {
   /**
    * CommentEntity → CommentItem
    */
-  CommentItem toItem(CommentEntity comment, Long currentUserId);
+  CommentItemDto toItem(CommentEntity comment, Long currentUserId);
 
   /**
    * CommentEntity 리스트 → CommentItem 리스트
    */
-  List<CommentItem> toItems(List<CommentEntity> comments, Long currentUserId);
+  List<CommentItemDto> toItems(List<CommentEntity> comments, Long currentUserId);
 
   /**
    * commentEntity -> put/create DTO 로 변환

@@ -4,20 +4,20 @@ import com.example.anyword.entity.ArticleEntity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class ArticleListItem {
+public class ArticleListItemDto {
 
   private Long articleId;
   private String title;
   private List<String> imageUrls;
-  private AuthorInfo author;
-  private ArticleStatusInfo status;
+  private AuthorInfoDto author;
+  private ArticleStatusInfoDto status;
   private LocalDateTime createdAt;
 
-  public ArticleListItem() {}
+  public ArticleListItemDto() {}
 
-  public static ArticleListItem from(ArticleEntity article, AuthorInfo author,
-      ArticleStatusInfo status){
-    ArticleListItem dto = new ArticleListItem();
+  public static ArticleListItemDto from(ArticleEntity article, AuthorInfoDto author,
+      ArticleStatusInfoDto status){
+    ArticleListItemDto dto = new ArticleListItemDto();
     dto.articleId = article.getId();
     dto.title = article.getTitle();
     dto.author = author;
@@ -41,11 +41,11 @@ public class ArticleListItem {
   }
 
 
-  public AuthorInfo getAuthor() {
+  public AuthorInfoDto getAuthor() {
     return author;
   }
 
-  public ArticleStatusInfo getStatus() {
+  public ArticleStatusInfoDto getStatus() {
     return status;
   }
 
