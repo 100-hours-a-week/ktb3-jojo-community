@@ -26,8 +26,18 @@ public class ArticleMapperIpl implements ArticleMapper {
       @Nullable List<String> imageUrls
   ) {
     if (article == null) return null;
-    return GetArticleResponseDto.from(article, author, status, likedByMe, isMyContents,
-        imageUrls == null ? List.of() : imageUrls);
+    return  new GetArticleResponseDto(
+        article.getId(),
+        article.getTitle(),
+        article.getContents(),
+        author,
+        status,
+        article.getCreatedAt(),
+        article.getUpdatedAt(),
+        imageUrls == null ? List.of() : imageUrls,
+        likedByMe,
+        isMyContents
+    );
   }
 
 
