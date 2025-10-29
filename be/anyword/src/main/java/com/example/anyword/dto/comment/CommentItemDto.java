@@ -3,7 +3,11 @@ package com.example.anyword.dto.comment;
 import com.example.anyword.dto.article.AuthorInfoDto;
 import com.example.anyword.entity.CommentEntity;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class CommentItemDto {
   private Long commentId;
   private String content;
@@ -31,43 +35,4 @@ public class CommentItemDto {
     );
   }
 
-  public Long getCommentId() {
-    return commentId;
-  }
-
-  public void setCommentId(Long commentId) {
-    this.commentId = commentId;
-  }
-
-  public String getContent() {
-    return content;
-  }
-
-  public void setContent(String content) {
-    this.content = content;
-  }
-
-  public AuthorInfoDto getAuthor() {
-    return author;
-  }
-
-  public void setAuthor(AuthorInfoDto author) {
-    this.author = author;
-  }
-
-  public boolean isEditable() {
-    return editable;
-  }
-
-  public void setEditable(boolean editable) {
-    this.editable = editable;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
 }

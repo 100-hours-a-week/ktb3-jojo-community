@@ -1,5 +1,8 @@
 package com.example.anyword.dto.comment;
 
+import lombok.Getter;
+
+@Getter
 public class CreateCommentResponseDto {
   private final Long commentId;
   private final Long articleId;
@@ -10,11 +13,4 @@ public class CreateCommentResponseDto {
     this.articleId = articleId;
   }
 
-  public Long getCommentId() {
-    return commentId;
-  }
-
-  public Long getArticleId() {
-    return articleId;
-  }
 }

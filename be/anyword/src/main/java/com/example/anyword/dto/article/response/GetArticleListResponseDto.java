@@ -3,7 +3,9 @@ package com.example.anyword.dto.article.response;
 import com.example.anyword.dto.article.ArticleListItemDto;
 import com.example.anyword.dto.article.PageInfoDto;
 import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class GetArticleListResponseDto {
 
   private List<ArticleListItemDto> items;
@@ -14,15 +16,6 @@ public class GetArticleListResponseDto {
   public GetArticleListResponseDto(List<ArticleListItemDto> items, PageInfoDto pageInfoDto) {
     this.items = items;
     this.pageInfoDto = pageInfoDto;
-  }
-
-  public List<ArticleListItemDto> getItems() {
-    return items;
-  }
-
-
-  public PageInfoDto getPageInfo() {
-    return pageInfoDto;
   }
 
 }

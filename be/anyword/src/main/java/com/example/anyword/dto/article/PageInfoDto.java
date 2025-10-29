@@ -1,12 +1,15 @@
 package com.example.anyword.dto.article;
 
+import lombok.Getter;
+
+@Getter
 public class PageInfoDto {
 
   private Integer nextPage;
   private Boolean hasNext;
   private Integer pageSize;
 
-  public PageInfoDto() {};
+  public PageInfoDto() {}
 
   public PageInfoDto(Integer nextPage, Boolean hasNext, Integer pageSize) {
     this.nextPage = nextPage;
@@ -14,17 +17,5 @@ public class PageInfoDto {
     this.pageSize = pageSize;
   }
 
-  public Integer getNextPage() {
-    return nextPage;
-  }
 
-
-  public Boolean getHasNext() {
-    return hasNext;
-  }
-
-
-  public Integer getPageSize() {
-    return pageSize;
-  }
 }

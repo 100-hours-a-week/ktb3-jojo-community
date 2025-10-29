@@ -1,5 +1,8 @@
 package com.example.anyword.dto.user.response;
 
+import lombok.Getter;
+
+@Getter
 public class UserResponseDto {
   private final Long id;
   private final String email;
@@ -15,8 +18,4 @@ public class UserResponseDto {
     this.profileImageUrl = profileImageUrl;
   }
 
-  public Long getId() { return id; }
-  public String getEmail() { return email; }
-  public String getNickname() { return nickname; }
-  public String getProfileImageUrl() { return profileImageUrl; }
 }

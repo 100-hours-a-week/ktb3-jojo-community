@@ -3,7 +3,9 @@ package com.example.anyword.dto.article;
 import com.example.anyword.entity.ArticleEntity;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class ArticleListItemDto {
 
   private Long articleId;
@@ -27,29 +29,4 @@ public class ArticleListItemDto {
   }
 
 
-  public Long getArticleId() {
-    return articleId;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-
-  public List<String> getImageUrls() {
-    return imageUrls;
-  }
-
-
-  public AuthorInfoDto getAuthor() {
-    return author;
-  }
-
-  public ArticleStatusInfoDto getStatus() {
-    return status;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
 }
