@@ -5,12 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity implements BaseEntity<Long> {
   @Id @Setter
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
@@ -18,16 +21,16 @@ public class UserEntity implements BaseEntity<Long> {
   private Long id; //PK
 
   @Column(unique = true, nullable = false)
-  private final String email;
+  private String email;
 
   @Column(nullable = false)
-  private final String password; //해싱
+  private String password; //해싱
 
   @Column(unique = true, nullable = false, length = 20)
-  private final String nickname;
+  private String nickname;
 
   @Column(nullable = false, length = 512)
-  private final String profileImageUrl;
+  private String profileImageUrl;
 
   // 데이터 저장을 위한 생성자 (ID 제외)
   public UserEntity(String email, String password, String nickname, String profileImageUrl) {

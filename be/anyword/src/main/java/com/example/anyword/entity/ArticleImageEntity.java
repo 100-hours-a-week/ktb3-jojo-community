@@ -7,11 +7,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ArticleImageEntity implements BaseEntity<Long> {
   @Id @Setter
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "article_image_sequence")
@@ -19,7 +22,7 @@ public class ArticleImageEntity implements BaseEntity<Long> {
   private Long id; //PK
 
   @Column(nullable = false)
-  private final Long articleId; //FK
+  private Long articleId; //FK
 
   @Column(nullable = false) @Setter
   private String imageURL;

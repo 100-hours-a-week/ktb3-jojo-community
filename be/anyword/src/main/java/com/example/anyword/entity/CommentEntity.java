@@ -7,11 +7,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentEntity implements BaseEntity<Long> {
   @Id @Setter
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
@@ -19,17 +22,17 @@ public class CommentEntity implements BaseEntity<Long> {
   private Long id; //PK
 
   @Column(nullable = false)
-  private final Long articleId; //FK
+  private Long articleId; //FK
 
   @Column(nullable = false)
-  private final Long userId; //FK
+  private Long userId; //FK
 
   @Column(nullable = false) @Setter
   private String contents;
 
   @Column(nullable = false)
   @JsonFormat(timezone = "Asia/Seoul")
-  private final LocalDateTime createdAt;
+  private LocalDateTime createdAt;
 
   @Column(nullable = false) @Setter
   @JsonFormat(timezone = "Asia/Seoul")

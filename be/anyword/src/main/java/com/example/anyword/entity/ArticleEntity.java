@@ -7,17 +7,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
-@Getter
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ArticleEntity implements BaseEntity<Long> {
   @Id @Setter @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "article_sequence")
   @Column(unique = true, nullable = false)
-  private Long id; //PK - 초기에 null ..?
+  private Long id; //PK
 
   @Column(nullable = false)
   private Long userId; //FK

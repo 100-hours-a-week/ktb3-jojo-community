@@ -7,12 +7,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LikeArticleEntity implements BaseEntity<Long> {
   @Id @Setter
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "like_article_sequence")
@@ -20,14 +22,14 @@ public class LikeArticleEntity implements BaseEntity<Long> {
   private Long id;
 
   @Column(nullable = false)
-  private final Long articleId;
+  private Long articleId;
 
   @Column(nullable = false)
-  private final Long userId;
+  private Long userId;
 
   @Column(nullable = false)
   @JsonFormat(timezone = "Asia/Seoul")
-  private final LocalDateTime createdAt;
+  private LocalDateTime createdAt;
 
   public LikeArticleEntity(Long articleId, Long userId) {
     this.articleId = articleId;
