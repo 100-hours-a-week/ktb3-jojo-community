@@ -25,7 +25,7 @@ public class ArticleEntity implements BaseEntity<Long> {
   private Long id; //PK
 
   @ManyToOne
-  @JoinColumn(name="userId", nullable = false)
+  @JoinColumn(name="userId", nullable = false) @Setter
   private UserEntity author; //FK
 
   @Column(nullable = false) @Setter

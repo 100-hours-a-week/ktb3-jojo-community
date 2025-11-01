@@ -5,6 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +34,9 @@ public class UserEntity implements BaseEntity<Long> {
 
   @Column(nullable = false, length = 512)
   private String profileImageUrl;
+
+  @OneToMany(mappedBy = "author")
+  private List<ArticleEntity> articles = new ArrayList<>();
 
   // 데이터 저장을 위한 생성자 (ID 제외)
   public UserEntity(String email, String password, String nickname, String profileImageUrl) {
@@ -63,6 +69,18 @@ public class UserEntity implements BaseEntity<Long> {
         nickname != null ? nickname : original.nickname,
         profileImageUrl != null ? profileImageUrl : original.profileImageUrl
     );
+  }
+
+  //TODO: 삭제하기
+  /**편의 메서드 for 동기화*/
+  public void addArticle(ArticleEntity article){
+    this.articles.add(article);
+    article.setAuthor(this);
+  }
+
+  public void removeArticle(ArticleEntity article) {
+    this.articles.remove(article);
+    article.setAuthor(null);
   }
 
 }
