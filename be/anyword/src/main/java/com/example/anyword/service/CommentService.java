@@ -9,9 +9,11 @@ import com.example.anyword.dto.comment.CreateCommentResponseDto;
 import com.example.anyword.dto.comment.GetCommentListResponseDto;
 import com.example.anyword.entity.ArticleEntity;
 import com.example.anyword.entity.CommentEntity;
+import com.example.anyword.entity.UserEntity;
 import com.example.anyword.mapper.CommentMapper;
 import com.example.anyword.repository.article.ArticleRepository;
 import com.example.anyword.repository.comment.CommentRepository;
+import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.exception.ForbiddenException;
 import com.example.anyword.shared.exception.NotFoundException;
 import java.util.List;
@@ -23,14 +25,17 @@ public class CommentService {
 
   private final CommentRepository commentRepository;
   private final ArticleRepository articleRepository;
+  private final UserRepository userRepository;
 
   private final CommentMapper commentMapper;
 
 
   public CommentService(CommentRepository commentRepository, ArticleRepository articleRepository,
+      UserRepository userRepository,
       CommentMapper commentMapper) {
     this.commentRepository = commentRepository;
     this.articleRepository = articleRepository;
+    this.userRepository = userRepository;
     this.commentMapper = commentMapper;
   }
 
@@ -53,8 +58,9 @@ public class CommentService {
 
   @Transactional
   public CreateCommentResponseDto createComment(Long articleId, Long userId, CommentRequestDto request) {
-    findArticle(articleId);
-    CommentEntity saved = commentRepository.save(new CommentEntity(articleId, userId, request.getContent()));
+    ArticleEntity article = findArticle(articleId);
+    UserEntity author = userRepository.nonOptionalFindById(userId);
+    CommentEntity saved = commentRepository.save(new CommentEntity(article, author, request.getContent()));
 
     return commentMapper.toResponse(saved);
   }
@@ -62,7 +68,8 @@ public class CommentService {
   @Transactional
   public CreateCommentResponseDto updateComment(Long commentId, Long userId, CommentRequestDto request) {
     CommentEntity comment = findComment(commentId);
-    checkUserIdwithAuthorId(userId, comment.getUserId());
+    Long authorId = comment.getAuthor().getId();
+    checkUserIdwithAuthorId(userId, authorId);
 
     CommentEntity updated = CommentEntity.copyWith(comment, request.getContent());
     CommentEntity saved = commentRepository.save(updated);
@@ -74,7 +81,8 @@ public class CommentService {
   @Transactional
   public void deleteComment(Long commentId, Long userId) {
     CommentEntity comment = findComment(commentId);
-    checkUserIdwithAuthorId(userId, comment.getUserId());
+    Long authorId = comment.getAuthor().getId();
+    checkUserIdwithAuthorId(userId, authorId);
 
     commentRepository.deleteById(commentId);
   }

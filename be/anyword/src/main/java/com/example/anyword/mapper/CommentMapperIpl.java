@@ -27,7 +27,8 @@ public class CommentMapperIpl implements CommentMapper {
    */
   @Override
   public CommentItemDto toItem(CommentEntity comment, Long currentUserId) {
-    UserEntity author = userRepository.findById(comment.getUserId())
+    Long authorId = comment.getAuthor().getId();
+    UserEntity author = userRepository.findById(authorId)
         .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 
     AuthorInfoDto authorInfoDto = new AuthorInfoDto(
@@ -36,7 +37,7 @@ public class CommentMapperIpl implements CommentMapper {
         author.getProfileImageUrl()
     );
 
-    boolean editable = currentUserId != null && currentUserId.equals(comment.getUserId());
+    boolean editable = currentUserId != null && currentUserId.equals(authorId);
 
     return new CommentItemDto(
         comment.getId(),
@@ -62,7 +63,8 @@ public class CommentMapperIpl implements CommentMapper {
    */
   @Override
   public CreateCommentResponseDto toResponse(CommentEntity comment){
-    return new CreateCommentResponseDto(comment.getId(), comment.getArticleId());
+    Long authorId = comment.getAuthor().getId();
+    return new CreateCommentResponseDto(comment.getId(), authorId);
   }
 
   /**

@@ -64,7 +64,7 @@ public class ArticleService {
 
     if (request.getImageUrls()!= null && !request.getImageUrls().isEmpty()){
       for (String imageUrl : request.getImageUrls()){
-        ArticleImageEntity image = new ArticleImageEntity(saved.getId(), imageUrl);
+        ArticleImageEntity image = new ArticleImageEntity(saved, imageUrl);
         imageRepository.save(image);
       }
     }
@@ -92,7 +92,7 @@ public class ArticleService {
       imageRepository.deleteByArticleId(articleId);
 
       for (String imageUrl : request.getImageUrls()) {
-        ArticleImageEntity image = new ArticleImageEntity(articleId, imageUrl);
+        ArticleImageEntity image = new ArticleImageEntity(article, imageUrl);
         imageRepository.save(image);
       }
 

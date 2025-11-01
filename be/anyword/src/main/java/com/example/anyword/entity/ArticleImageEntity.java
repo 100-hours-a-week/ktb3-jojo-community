@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,8 +23,9 @@ public class ArticleImageEntity implements BaseEntity<Long> {
   @Column(unique = true, nullable = false)
   private Long id; //PK
 
-  @Column(nullable = false)
-  private Long articleId; //FK
+  @ManyToOne
+  @JoinColumn(name="article_id", nullable = false)
+  private ArticleEntity article;
 
   @Column(nullable = false) @Setter
   private String imageURL;
@@ -31,8 +34,8 @@ public class ArticleImageEntity implements BaseEntity<Long> {
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
 
-  public ArticleImageEntity(Long articleId, String imageURL){
-    this.articleId = articleId;
+  public ArticleImageEntity(ArticleEntity article, String imageURL){
+    this.article = article;
     this.imageURL = imageURL;
     this.createdAt = LocalDateTime.now();
   }

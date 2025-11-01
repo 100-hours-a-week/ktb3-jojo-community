@@ -17,7 +17,7 @@ public class CommentRepositoryImpl extends BaseRepository<CommentEntity> impleme
   public long countByArticleId(Long articleId) {
     return store.values()
         .stream()
-        .filter(image -> image.getArticleId().equals(articleId))
+        .filter(image -> image.getArticle().getId().equals(articleId))
         .count();
   }
 
@@ -25,7 +25,7 @@ public class CommentRepositoryImpl extends BaseRepository<CommentEntity> impleme
   public List<CommentEntity> findAllByArticleIdOrderByCreatedAtDesc(Long articleId) {
     return store.values()
         .stream()
-        .filter(comment -> comment.getArticleId().equals(articleId))
+        .filter(comment -> comment.getArticle().getId().equals(articleId))
         .sorted(Comparator.comparing(CommentEntity::getCreatedAt).reversed())
         .collect(Collectors.toList());
   }

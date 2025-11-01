@@ -20,7 +20,7 @@ public class ArticleImageRepositoryImpl extends BaseRepository<ArticleImageEntit
   public List<String> findByArticleId(Long articleId){
     return store.values()
         .stream()
-        .filter(image -> image.getArticleId().equals(articleId))
+        .filter(image -> image.getArticle().getId().equals(articleId))
         .map(ArticleImageEntity::getImageURL)
         .toList();
   }
@@ -31,7 +31,7 @@ public class ArticleImageRepositoryImpl extends BaseRepository<ArticleImageEntit
   @Override
   public int deleteByArticleId(Long articleId) {
     List<Long> imageIds = store.values().stream()
-        .filter(image -> image.getArticleId().equals(articleId))
+        .filter(image -> image.getArticle().getId().equals(articleId))
         .map(ArticleImageEntity::getId)
         .toList();
 
