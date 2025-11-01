@@ -6,8 +6,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,13 +18,15 @@ import lombok.Setter;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ArticleEntity implements BaseEntity<Long> {
   @Id @Setter @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "article_sequence")
   @Column(unique = true, nullable = false)
   private Long id; //PK
 
-  @Column(nullable = false)
-  private Long userId; //FK
+  @ManyToOne
+  @JoinColumn(name="userId", nullable = false)
+  private UserEntity author; //FK
 
   @Column(nullable = false) @Setter
   private String title;
@@ -40,8 +45,8 @@ public class ArticleEntity implements BaseEntity<Long> {
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime updatedAt;
 
-  public ArticleEntity(Long userId, String title, String contents){
-    this.userId = userId;
+  public ArticleEntity(UserEntity author, String title, String contents){
+    this.author = author;
     this.title = title;
     this.contents = contents;
     this.viewCnt = 0;
@@ -49,21 +54,10 @@ public class ArticleEntity implements BaseEntity<Long> {
     this.updatedAt = LocalDateTime.now();
   }
 
-  private ArticleEntity(Long id, Long userId, String title, String contents,
-      long viewCnt, LocalDateTime createdAt, LocalDateTime updatedAt) {
-    this.id = id;
-    this.userId = userId;
-    this.title = title;
-    this.contents = contents;
-    this.viewCnt = viewCnt;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
-
   public static ArticleEntity copyWith(ArticleEntity original, String newTitle, String newContent) {
     return new ArticleEntity(
         original.getId(),
-        original.getUserId(),
+        original.getAuthor(),
         newTitle != null ? newTitle : original.getTitle(),
         newContent != null ? newContent : original.getContents(),
         original.getViewCnt(),

@@ -7,7 +7,6 @@ import static com.example.anyword.service.utils.ArticleUtils.validateSort;
 import static com.example.anyword.shared.constants.PageConstants.SORT_POPULARITY;
 import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_NOT_FOUND;
 import static com.example.anyword.shared.constants.ResponseMessage.FORBIDDEN;
-import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
 import com.example.anyword.dto.article.ArticleListItemDto;
 import com.example.anyword.dto.article.ArticleStatusInfoDto;
@@ -58,7 +57,9 @@ public class ArticleService {
 
   @Transactional
   public PostArticleResponseDto createArticle(Long userId, PostArticleRequestDto request){
-    ArticleEntity article = new ArticleEntity(userId, request.getTitle(), request.getContent());
+
+    UserEntity author = userRepository.nonOptionalFindById(userId);
+    ArticleEntity article = new ArticleEntity(author, request.getTitle(), request.getContent());
     ArticleEntity saved = articleRepository.save(article);
 
     if (request.getImageUrls()!= null && !request.getImageUrls().isEmpty()){
@@ -74,8 +75,9 @@ public class ArticleService {
   @Transactional
   public PutArticleResponseDto putArticle(Long userId, Long articleId, PutArticleRequestDto request) {
     ArticleEntity article = findArticle(articleId);
+    Long authorId = article.getAuthor().getId();
 
-    if (!article.getUserId().equals(userId)) {
+    if (!authorId.equals(userId)) {
       throw new ForbiddenException(FORBIDDEN);
     }
 
@@ -103,8 +105,9 @@ public class ArticleService {
   public void deleteArticle(Long userId, Long articleId) {
 
     ArticleEntity article = findArticle(articleId);
+    Long authorId = article.getAuthor().getId();
 
-    if (!article.getUserId().equals(userId)) {
+    if (!authorId.equals(userId)) {
       throw new ForbiddenException(FORBIDDEN);
     }
 
@@ -125,8 +128,7 @@ public class ArticleService {
 
     article.incrementViews();
 
-     UserEntity author = userRepository.findById(article.getUserId())
-         .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+     UserEntity author = article.getAuthor();
 
      AuthorInfoDto authorInfoDto = AuthorInfoDto.from(author);
 
@@ -138,7 +140,8 @@ public class ArticleService {
     boolean likedByMe = (currentUserId != null)
         && likeRepository.existsByArticleIdAndUserId(articleId, currentUserId);
 
-    boolean isMyContents = article.getUserId().equals(currentUserId);
+    Long authorId = article.getAuthor().getId();
+    boolean isMyContents = authorId.equals(currentUserId);
 
     List<String> imageUrls = imageRepository.findByArticleId(articleId);
 
@@ -182,8 +185,7 @@ public class ArticleService {
   }
 
   private ArticleListItemDto convertToListItemDto(ArticleEntity article) {
-    UserEntity author = userRepository.findById(article.getUserId())
-        .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+    UserEntity author =  article.getAuthor();
 
     AuthorInfoDto authorInfoDto = new AuthorInfoDto(author.getId(), author.getNickname(),
         author.getProfileImageUrl());

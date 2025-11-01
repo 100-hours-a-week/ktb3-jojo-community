@@ -21,6 +21,11 @@ public class UserRepositoryImpl extends BaseRepository<UserEntity> implements Us
   }
 
   @Override
+  public UserEntity nonOptionalFindById(Long id) {
+    return this.store.get(id);
+  }
+
+  @Override
   public boolean isEmailExist(String email){
     return this.findByEmail(email).isPresent();
   }
