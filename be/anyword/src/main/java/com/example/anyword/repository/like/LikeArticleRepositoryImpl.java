@@ -13,15 +13,15 @@ public class LikeArticleRepositoryImpl extends BaseRepository<LikeArticleEntity>
   @Override
   public int countByArticleId(Long articleId) {
     return (int) store.values().stream()
-        .filter(e -> articleId.equals(e.getArticleId()))
+        .filter(e -> articleId.equals(e.getArticle().getId()))
         .count();
   }
 
   @Override
   public boolean existsByArticleIdAndUserId(Long articleId, Long currentUserId) {
     return store.values().stream()
-        .anyMatch(e -> articleId.equals(e.getArticleId())
-            && currentUserId.equals(e.getUserId()));
+        .anyMatch(e -> articleId.equals(e.getArticle().getId())
+            && currentUserId.equals(e.getAuthor().getId()));
   }
 
   @Override
@@ -30,7 +30,7 @@ public class LikeArticleRepositoryImpl extends BaseRepository<LikeArticleEntity>
 
     for (var entry : store.entrySet()) {
       LikeArticleEntity e = entry.getValue();
-      if (articleId.equals(e.getArticleId()) && userId.equals(e.getUserId())) {
+      if (articleId.equals(e.getArticle().getId()) && userId.equals(e.getAuthor().getId())) {
         keyToRemove = entry.getKey();
         break;
       }

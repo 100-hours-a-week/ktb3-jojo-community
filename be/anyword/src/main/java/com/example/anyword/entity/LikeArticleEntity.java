@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,19 +23,21 @@ public class LikeArticleEntity implements BaseEntity<Long> {
   @Column(unique = true, nullable = false)
   private Long id;
 
-  @Column(nullable = false)
-  private Long articleId;
+  @ManyToOne
+  @JoinColumn(name="article_id", nullable = false) @Setter
+  private ArticleEntity article; //FK
 
-  @Column(nullable = false)
-  private Long userId;
+  @ManyToOne
+  @JoinColumn(name="user_id", nullable = false) @Setter
+  private UserEntity author; //FK2
 
   @Column(nullable = false)
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
 
-  public LikeArticleEntity(Long articleId, Long userId) {
-    this.articleId = articleId;
-    this.userId = userId;
+  public LikeArticleEntity(ArticleEntity article, UserEntity author) {
+    this.article = article;
+    this.author = author;
     this.createdAt = LocalDateTime.now();
   }
 
