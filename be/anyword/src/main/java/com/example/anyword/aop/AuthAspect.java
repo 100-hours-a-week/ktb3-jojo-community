@@ -1,10 +1,13 @@
 package com.example.anyword.aop;
 import static com.example.anyword.shared.constants.ResponseMessage.UNAUTHORIZED;
 
+import com.example.anyword.entity.UserEntity;
+import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.constants.Key;
 import com.example.anyword.shared.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
+import lombok.Getter;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -18,6 +21,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Aspect
 @Component
 public class AuthAspect {
+
+  @Getter
+  private final UserRepository userRepository;
+
+  public AuthAspect(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
 
   /**
@@ -37,7 +47,8 @@ public class AuthAspect {
     }
 
     HttpSession session = attrs.getRequest().getSession(false);
-    Optional.ofNullable((Long) session.getAttribute(Key.SESSION_USER_ID)).orElseThrow(()->
+    Long userId = Optional.ofNullable((Long) session.getAttribute(Key.SESSION_USER_ID)).orElseThrow(()->
         new UnauthorizedException(UNAUTHORIZED));
+    UserEntity user = userRepository.findById(userId).orElseThrow(()-> new UnauthorizedException(UNAUTHORIZED));
   }
 }
