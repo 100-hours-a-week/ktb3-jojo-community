@@ -1,21 +1,15 @@
 package com.example.anyword.repository.article;
 
 import com.example.anyword.entity.ArticleEntity;
+
 import java.util.List;
-import java.util.Optional;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ArticleRepository {
-  ArticleEntity save(ArticleEntity entity);
-  Optional<ArticleEntity> findById(Long id);
-  List<ArticleEntity> findAll();
-  boolean deleteById(Long id);
-
+public interface ArticleRepository extends JpaRepository<ArticleEntity, Long> {
   /** 최신순 조회 */
-  List<ArticleEntity> findAllByOrderByCreatedAtDesc(int page, int size);
+  List<ArticleEntity> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
   /** 조회순 조회 */
-  List<ArticleEntity> findAllOrderByPopularity(int page, int size);
-
-  /** 전체 게시글 개수 */
-  long count();
+  List<ArticleEntity> findAlByOrderByViewCntDesc(Pageable pageable);
 }

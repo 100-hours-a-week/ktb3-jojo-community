@@ -30,6 +30,9 @@ import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.exception.ForbiddenException;
 import com.example.anyword.shared.exception.NotFoundException;
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -160,12 +163,14 @@ public class ArticleService {
     int validPageSize = validatePageSize(pageSize);
     String validSort = validateSort(sort);
 
+    Pageable pageable = PageRequest.of(validPage - 1, pageSize, Sort.by(sort).descending());
+
 
     List<ArticleEntity> articles;
     if (SORT_POPULARITY.equals(validSort)) {
-      articles = articleRepository.findAllOrderByPopularity(validPage - 1, validPageSize);
+      articles = articleRepository.findAlByOrderByViewCntDesc(pageable);
     } else {
-      articles = articleRepository.findAllByOrderByCreatedAtDesc(validPage - 1, validPageSize);
+      articles = articleRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
 
     List<ArticleListItemDto> items = articles.stream()
