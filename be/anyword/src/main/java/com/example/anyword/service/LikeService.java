@@ -34,7 +34,7 @@ public class LikeService {
     ArticleEntity article = articleRepository.findById(articleId)
         .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
-    UserEntity author = userRepository.nonOptionalFindById(userId);
+    UserEntity author = userRepository.getReferenceById(userId);
 
     if (likeRepository.existsByArticleIdAndUserId(articleId, userId)) {
       throw new ConflictException(ALREADY_EXISTS);

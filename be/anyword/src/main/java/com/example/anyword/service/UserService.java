@@ -2,7 +2,6 @@ package com.example.anyword.service;
 
 import static com.example.anyword.shared.constants.Key.SESSION_USER_ID;
 import static com.example.anyword.shared.constants.ResponseMessage.EMAIL_DUPLICATE;
-import static com.example.anyword.shared.constants.ResponseMessage.FAIL;
 import static com.example.anyword.shared.constants.ResponseMessage.NICKNAME_DUPLICATE;
 import static com.example.anyword.shared.constants.ResponseMessage.SESSION_EXPIRED;
 import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
@@ -39,11 +38,11 @@ public class UserService {
    */
   @Transactional
   public SignupResponseDto signup(SignupRequestDto dto){ //dto 로 변경 ...?
-    if (userRepository.isEmailExist(dto.getEmail())){
+    if (userRepository.existsByEmail(dto.getEmail())){
       throw new ConflictException(EMAIL_DUPLICATE);
     }
 
-    if (userRepository.isNicknameExist(dto.getNickname())){
+    if (userRepository.existsByNickname(dto.getNickname())){
       throw new ConflictException(NICKNAME_DUPLICATE);
     }
 
@@ -95,6 +94,7 @@ public class UserService {
     return incoming.trim();
   }
 
+
   @Transactional
   public UserResponseDto putUser(HttpSession session, PutUserRequestDto request){
     UserEntity original = this.getUserFromSession(session);
@@ -103,28 +103,25 @@ public class UserService {
     String newNickname = merge(request.getNickname(), original.getNickname());
     String newProfile = merge(request.getProfileImageUrl(), original.getProfileImageUrl());
     String newPassword = merge(request.getPassword(), original.getPassword());
-    if (!Objects.requireNonNull(newEmail).equals(original.getEmail()) && userRepository.isEmailExist(newEmail)) {
+    if (!Objects.requireNonNull(newEmail).equals(original.getEmail()) && userRepository.existsByEmail(newEmail)) {
       throw new ConflictException(EMAIL_DUPLICATE);
     }
 
-    if (!Objects.requireNonNull(newNickname).equals(original.getNickname()) && userRepository.isNicknameExist(newNickname)) {
+    if (!Objects.requireNonNull(newNickname).equals(original.getNickname()) && userRepository.existsByNickname(newNickname)) {
       throw new ConflictException(NICKNAME_DUPLICATE);
     }
 
+    UserEntity updated = original.copyWith(newEmail, newPassword, newNickname, newProfile);
 
-    UserEntity updated = UserEntity.copyWith(original, newEmail, newPassword, newNickname, newProfile);
 
-    return userMapper.toUserResponseDto(userRepository.update(updated));
+    return userMapper.toUserResponseDto(updated);
   }
 
 
   @Transactional
   public void signout(HttpSession session){
     Long userId = (Long) session.getAttribute(SESSION_USER_ID);
-
-    if (!userRepository.deleteById(userId)){
-      throw new BadRequestException(FAIL);
-    }
+    userRepository.deleteById(userId);
 
     session.invalidate();
   }

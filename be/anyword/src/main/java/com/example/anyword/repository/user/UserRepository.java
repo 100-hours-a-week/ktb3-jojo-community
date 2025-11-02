@@ -2,15 +2,11 @@ package com.example.anyword.repository.user;
 
 import com.example.anyword.entity.UserEntity;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
   Optional<UserEntity> findByEmail(String email);
-  Optional<UserEntity> findById(Long id);
-  UserEntity nonOptionalFindById(Long id);
   Optional<UserEntity> findByNickname(String nickname);
-  boolean isEmailExist(String email);
-  boolean isNicknameExist(String nickname);
-  UserEntity update(UserEntity user);
-  UserEntity save(UserEntity user);
-  boolean deleteById(Long id);
+  boolean existsByEmail(String email);
+  boolean existsByNickname(String nickname);
 }

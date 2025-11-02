@@ -15,10 +15,10 @@ import lombok.Setter;
 
 
 @Entity
-@Getter
+@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity implements BaseEntity<Long> {
-  @Id @Setter
+  @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
   @Column(unique = true, nullable = false)
   private Long id; //PK
@@ -55,32 +55,20 @@ public class UserEntity implements BaseEntity<Long> {
   }
 
   //setter 사용 x, patch
-  public static UserEntity copyWith(
-      UserEntity original,
+  public UserEntity copyWith(
       String email,
       String password,
       String nickname,
       String profileImageUrl) {
 
-    return new UserEntity(
-        original.getId(),
-        email != null ? email : original.email,
-        password != null ? password : original.password,
-        nickname != null ? nickname : original.nickname,
-        profileImageUrl != null ? profileImageUrl : original.profileImageUrl
-    );
+    //TODO: setter 사용이 최선인가 ..
+    this.setEmail(email != null ? email : this.email);
+    this.setPassword(password != null ? password : this.password);
+    this.setNickname(nickname != null ? nickname : this.nickname);
+    this. setProfileImageUrl(profileImageUrl != null ? profileImageUrl : this.profileImageUrl);
+
+    return this;
   }
 
-  //TODO: 삭제하기
-  /**편의 메서드 for 동기화*/
-  public void addArticle(ArticleEntity article){
-    this.articles.add(article);
-    article.setAuthor(this);
-  }
-
-  public void removeArticle(ArticleEntity article) {
-    this.articles.remove(article);
-    article.setAuthor(null);
-  }
 
 }

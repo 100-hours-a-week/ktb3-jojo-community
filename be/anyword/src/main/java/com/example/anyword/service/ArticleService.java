@@ -58,7 +58,7 @@ public class ArticleService {
   @Transactional
   public PostArticleResponseDto createArticle(Long userId, PostArticleRequestDto request){
 
-    UserEntity author = userRepository.nonOptionalFindById(userId);
+    UserEntity author = userRepository.getReferenceById(userId);
     ArticleEntity article = new ArticleEntity(author, request.getTitle(), request.getContent());
     ArticleEntity saved = articleRepository.save(article);
 

@@ -59,7 +59,7 @@ public class CommentService {
   @Transactional
   public CreateCommentResponseDto createComment(Long articleId, Long userId, CommentRequestDto request) {
     ArticleEntity article = findArticle(articleId);
-    UserEntity author = userRepository.nonOptionalFindById(userId);
+    UserEntity author = userRepository.getReferenceById(userId);
     CommentEntity saved = commentRepository.save(new CommentEntity(article, author, request.getContent()));
 
     return commentMapper.toResponse(saved);
