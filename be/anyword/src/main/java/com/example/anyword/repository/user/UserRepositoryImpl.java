@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public class UserRepositoryImpl extends BaseRepository<UserEntity> implements UserRepository {
+public class UserRepositoryImpl extends BaseRepository<UserEntity> implements UserRepository{
 
   public UserRepositoryImpl(){
     super();
@@ -40,6 +40,11 @@ public class UserRepositoryImpl extends BaseRepository<UserEntity> implements Us
   @Override
   public boolean isNicknameExist(String nickname){
     return this.findByNickname(nickname).isPresent();
+  }
+
+  @Override
+  public UserEntity update(UserEntity user) {
+    return null;
   }
 
 }

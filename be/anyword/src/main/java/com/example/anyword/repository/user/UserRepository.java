@@ -10,6 +10,7 @@ public interface UserRepository {
   Optional<UserEntity> findByNickname(String nickname);
   boolean isEmailExist(String email);
   boolean isNicknameExist(String nickname);
+  UserEntity update(UserEntity user);
   UserEntity save(UserEntity user);
   boolean deleteById(Long id);
 }

@@ -114,7 +114,7 @@ public class UserService {
 
     UserEntity updated = UserEntity.copyWith(original, newEmail, newPassword, newNickname, newProfile);
 
-    return userMapper.toUserResponseDto(userRepository.save(updated));
+    return userMapper.toUserResponseDto(userRepository.update(updated));
   }
 
 

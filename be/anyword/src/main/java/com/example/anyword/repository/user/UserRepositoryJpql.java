@@ -63,6 +63,17 @@ public class UserRepositoryJpql implements UserRepository {
     return user;
   }
 
+  public UserEntity update(UserEntity user){
+    UserEntity foundUser = em.find(UserEntity.class, user.getId());
+
+
+    foundUser.setNickname(user.getNickname());
+    foundUser.setProfileImageUrl(user.getProfileImageUrl());
+    foundUser.setPassword(user.getPassword());
+    return foundUser;
+  }
+
+
   @Override
   public boolean deleteById(Long id) {
     String jpql = "delete from UserEntity u where u.id = :id";
