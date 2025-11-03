@@ -1,17 +1,13 @@
 package com.example.anyword.repository.like;
 
+import com.example.anyword.entity.ArticleEntity;
 import com.example.anyword.entity.LikeArticleEntity;
-import java.util.List;
-import java.util.Optional;
+import com.example.anyword.entity.UserEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface LikeArticleRepository {
-  LikeArticleEntity save(LikeArticleEntity entity);
-  Optional<LikeArticleEntity> findById(Long id);
-  List<LikeArticleEntity> findAll();
-  boolean deleteById(Long id);
-
+public interface LikeArticleRepository extends JpaRepository<LikeArticleEntity, Long> {
   int countByArticleId(Long articleId);
-  boolean existsByArticleIdAndUserId(Long articleId, Long userId);
-  boolean deleteByArticleIdAndUserId(Long articleId, Long userId);
+  boolean existsByArticleAndAuthor(ArticleEntity article, UserEntity author);
+  boolean deleteByArticleAndAuthor(ArticleEntity article, UserEntity author);
 }

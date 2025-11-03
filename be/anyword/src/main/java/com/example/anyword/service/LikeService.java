@@ -34,22 +34,24 @@ public class LikeService {
     ArticleEntity article = articleRepository.findById(articleId)
         .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
-    UserEntity author = userRepository.getReferenceById(userId);
+    UserEntity me = userRepository.getReferenceById(userId);
 
-    if (likeRepository.existsByArticleIdAndUserId(articleId, userId)) {
+    if (likeRepository.existsByArticleAndAuthor(article, me)) {
       throw new ConflictException(ALREADY_EXISTS);
     }
 
-    LikeArticleEntity like = new LikeArticleEntity(article, author);
+    LikeArticleEntity like = new LikeArticleEntity(article, me);
     likeRepository.save(like);
   }
 
   @Transactional
   public void removeLike(Long articleId, Long userId) {
-    articleRepository.findById(articleId)
+    ArticleEntity article = articleRepository.findById(articleId)
         .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
-    boolean deleted = likeRepository.deleteByArticleIdAndUserId(articleId, userId);
+    UserEntity me = userRepository.getReferenceById(userId);
+
+    boolean deleted = likeRepository.deleteByArticleAndAuthor(article, me);
 
     if (!deleted) {
       throw new NotFoundException(LIKED_NOT_FOUND);
