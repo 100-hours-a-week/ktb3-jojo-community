@@ -19,7 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity implements BaseEntity<Long> {
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(unique = true, nullable = false)
   private Long id; //PK
 

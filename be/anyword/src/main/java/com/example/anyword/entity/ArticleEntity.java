@@ -20,7 +20,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ArticleEntity implements BaseEntity<Long> {
-  @Id @Setter @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "article_sequence")
+  @Id @Setter @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(unique = true, nullable = false)
   private Long id; //PK
 

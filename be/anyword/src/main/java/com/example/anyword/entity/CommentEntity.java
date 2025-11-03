@@ -21,7 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CommentEntity implements BaseEntity<Long> {
   @Id @Setter
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(unique = true, nullable = false)
   private Long id; //PK
 
