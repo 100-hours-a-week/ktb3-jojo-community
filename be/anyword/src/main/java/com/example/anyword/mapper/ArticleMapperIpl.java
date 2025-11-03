@@ -9,7 +9,7 @@ import com.example.anyword.dto.article.response.GetArticleResponseDto;
 import com.example.anyword.dto.article.response.PostArticleResponseDto;
 import com.example.anyword.dto.article.response.PutArticleResponseDto;
 import com.example.anyword.entity.ArticleEntity;
-import io.micrometer.common.lang.Nullable;
+import com.example.anyword.entity.ArticleImageEntity;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +22,14 @@ public class ArticleMapperIpl implements ArticleMapper {
       AuthorInfoDto author,
       ArticleStatusInfoDto status,
       boolean likedByMe,
-      boolean isMyContents,
-      @Nullable List<String> imageUrls
+      boolean isMyContents
   ) {
     if (article == null) return null;
+
+    List<String> imageUrls = article.getArticleImageEntities() == null ? List.of()
+        : article.getArticleImageEntities().stream().map(ArticleImageEntity::getImageURL).toList();
+
+
     return  new GetArticleResponseDto(
         article.getId(),
         article.getTitle(),
@@ -34,7 +38,7 @@ public class ArticleMapperIpl implements ArticleMapper {
         status,
         article.getCreatedAt(),
         article.getUpdatedAt(),
-        imageUrls == null ? List.of() : imageUrls,
+        imageUrls,
         likedByMe,
         isMyContents
     );

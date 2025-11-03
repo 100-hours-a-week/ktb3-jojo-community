@@ -87,7 +87,7 @@ public class ArticleService {
     String newTitle = merge(request.getTitle(), article.getTitle());
     String newContent = merge(request.getContents(), article.getContents());
 
-    ArticleEntity updated = ArticleEntity.copyWith(article, newTitle, newContent);
+    ArticleEntity updated = article.copyWith(newTitle, newContent);
     ArticleEntity saved = articleRepository.save(updated);
 
     if (request.getImageUrls()!=null) {
@@ -131,25 +131,23 @@ public class ArticleService {
 
     article.incrementViews();
 
-     UserEntity author = article.getAuthor();
+    UserEntity author = article.getAuthor();
 
-     AuthorInfoDto authorInfoDto = AuthorInfoDto.from(author);
+    AuthorInfoDto authorInfoDto = AuthorInfoDto.from(author);
 
-     long likesCount = likeRepository.countByArticleId(articleId);
-     long commentsCount = commentRepository.countByArticleId(articleId);
+    long likesCount = likeRepository.countByArticleId(articleId);
+    long commentsCount = commentRepository.countByArticleId(articleId);
 
     ArticleStatusInfoDto status = new ArticleStatusInfoDto(likesCount, commentsCount, article.getViewCnt());
 
     boolean likedByMe = (currentUserId != null)
-        && likeRepository.existsByArticleIdAndUserId(articleId, currentUserId);
+        && likeRepository.existsByArticleAndAuthor(article, userRepository.getReferenceById(currentUserId));
 
     Long authorId = article.getAuthor().getId();
     boolean isMyContents = authorId.equals(currentUserId);
 
-    List<String> imageUrls = imageRepository.findByArticleId(articleId);
-
     return articleMapper.toGetArticleResponse(
-        article, authorInfoDto, status, likedByMe, isMyContents, imageUrls
+        article, authorInfoDto, status, likedByMe, isMyContents
     );
   }
 

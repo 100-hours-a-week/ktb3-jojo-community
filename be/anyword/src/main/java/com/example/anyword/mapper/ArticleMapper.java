@@ -9,7 +9,6 @@ import com.example.anyword.dto.article.response.GetArticleResponseDto;
 import com.example.anyword.dto.article.response.PostArticleResponseDto;
 import com.example.anyword.dto.article.response.PutArticleResponseDto;
 import com.example.anyword.entity.ArticleEntity;
-import io.micrometer.common.lang.Nullable;
 import java.util.List;
 
 public interface ArticleMapper {
@@ -19,8 +18,7 @@ public interface ArticleMapper {
       AuthorInfoDto author,
       ArticleStatusInfoDto status,
       boolean likedByMe,
-      boolean isMyContents,
-      @Nullable List<String> imageUrls
+      boolean isMyContents
   );
 
   /** 게시글 작성 응답 매핑 */

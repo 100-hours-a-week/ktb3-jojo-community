@@ -8,7 +8,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,6 +47,9 @@ public class ArticleEntity implements BaseEntity<Long> {
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime updatedAt;
 
+  @OneToMany(mappedBy = "article")
+  private List<ArticleImageEntity> articleImageEntities;
+
   public ArticleEntity(UserEntity author, String title, String contents){
     this.author = author;
     this.title = title;
@@ -54,16 +59,12 @@ public class ArticleEntity implements BaseEntity<Long> {
     this.updatedAt = LocalDateTime.now();
   }
 
-  public static ArticleEntity copyWith(ArticleEntity original, String newTitle, String newContent) {
-    return new ArticleEntity(
-        original.getId(),
-        original.getAuthor(),
-        newTitle != null ? newTitle : original.getTitle(),
-        newContent != null ? newContent : original.getContents(),
-        original.getViewCnt(),
-        original.getCreatedAt(),
-        LocalDateTime.now()
-    );
+  //TODO: setter 사용이 최선?
+  public ArticleEntity copyWith(String newTitle, String newContent) {
+    this.setTitle(newTitle);
+    this.setContents(newContent);
+
+    return this;
   }
 
   public void incrementViews() {
