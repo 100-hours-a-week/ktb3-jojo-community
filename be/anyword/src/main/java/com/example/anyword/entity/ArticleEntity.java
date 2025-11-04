@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
@@ -48,6 +49,7 @@ public class ArticleEntity implements BaseEntity<Long> {
   private LocalDateTime updatedAt;
 
   @OneToMany(mappedBy = "article")
+  @BatchSize(size=20)
   private List<ArticleImageEntity> articleImageEntities;
 
   public ArticleEntity(UserEntity author, String title, String contents){

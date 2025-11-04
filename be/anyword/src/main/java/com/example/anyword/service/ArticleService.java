@@ -166,7 +166,7 @@ public class ArticleService {
 
     List<ArticleEntity> articles;
     if (SORT_POPULARITY.equals(validSort)) {
-      articles = articleRepository.findAlByOrderByViewCntDesc(pageable);
+      articles = articleRepository.findAllByOrderByViewCntDesc(pageable);
     } else {
       articles = articleRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
