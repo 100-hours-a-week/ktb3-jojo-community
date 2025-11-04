@@ -29,7 +29,9 @@ import com.example.anyword.repository.like.LikeArticleRepository;
 import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.exception.ForbiddenException;
 import com.example.anyword.shared.exception.NotFoundException;
+import com.example.anyword.shared.utils.RowsUtil;
 import java.util.List;
+import java.util.Map;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -171,9 +173,15 @@ public class ArticleService {
       articles = articleRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
 
+    List<Long> articleIds = articles.stream().map((ArticleEntity::getId)).toList();
+
+    Map<Long, Long> likeMap = RowsUtil.toIdCountMap(likeRepository.bulkCountByArticleId(articleIds));
+    Map<Long, Long> commentMap  = RowsUtil.toIdCountMap(commentRepository.bulkCountByArticleId(articleIds));
+
     List<ArticleListItemDto> items = articles.stream()
-        .map(this::convertToListItemDto)
+        .map(article -> convertToListItemDto(article, likeMap.getOrDefault(article.getId(), 0L), commentMap.getOrDefault(article.getId(), 0L)))
         .toList();
+
 
     long totalCount = articleRepository.count();
     boolean hasNext = (long) validPage * validPageSize < totalCount;
@@ -187,16 +195,13 @@ public class ArticleService {
     return articleMapper.toGetArticleListResponse(items, pageInfoDto);
   }
 
-  private ArticleListItemDto convertToListItemDto(ArticleEntity article) {
+  private ArticleListItemDto convertToListItemDto(ArticleEntity article, Long likeCounts, Long commentCounts) {
     UserEntity author =  article.getAuthor();
 
     AuthorInfoDto authorInfoDto = new AuthorInfoDto(author.getId(), author.getNickname(),
         author.getProfileImageUrl());
 
-    long likesCount = likeRepository.countByArticleId(article.getId());
-    long commentsCount = commentRepository.countByArticleId(article.getId());
-
-    ArticleStatusInfoDto status = new ArticleStatusInfoDto(likesCount, commentsCount, article.getViewCnt());
+    ArticleStatusInfoDto status = new ArticleStatusInfoDto(likeCounts, commentCounts, article.getViewCnt());
 
     return ArticleListItemDto.from(article, authorInfoDto, status);
   }
