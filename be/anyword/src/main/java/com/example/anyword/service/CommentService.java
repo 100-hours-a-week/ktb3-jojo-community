@@ -3,6 +3,7 @@ package com.example.anyword.service;
 import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_NOT_FOUND;
 import static com.example.anyword.shared.constants.ResponseMessage.COMMENT_NOT_FOUND;
 import static com.example.anyword.shared.constants.ResponseMessage.FORBIDDEN;
+import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
 import com.example.anyword.dto.comment.CommentRequestDto;
 import com.example.anyword.dto.comment.CreateCommentResponseDto;
@@ -16,6 +17,7 @@ import com.example.anyword.repository.comment.CommentRepository;
 import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.exception.ForbiddenException;
 import com.example.anyword.shared.exception.NotFoundException;
+import com.example.anyword.shared.exception.UnauthorizedException;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +61,7 @@ public class CommentService {
   @Transactional
   public CreateCommentResponseDto createComment(Long articleId, Long userId, CommentRequestDto request) {
     ArticleEntity article = findArticle(articleId);
-    UserEntity author = userRepository.getReferenceById(userId);
+    UserEntity author = userRepository.findById(userId).orElseThrow(()-> new UnauthorizedException(USER_NOT_FOUND));
     CommentEntity saved = commentRepository.save(new CommentEntity(article, author, request.getContent()));
 
     return commentMapper.toResponse(saved);

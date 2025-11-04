@@ -3,6 +3,7 @@ package com.example.anyword.service;
 import static com.example.anyword.shared.constants.ResponseMessage.ALREADY_EXISTS;
 import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_NOT_FOUND;
 import static com.example.anyword.shared.constants.ResponseMessage.LIKED_NOT_FOUND;
+import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
 import com.example.anyword.entity.ArticleEntity;
 import com.example.anyword.entity.LikeArticleEntity;
@@ -12,6 +13,7 @@ import com.example.anyword.repository.like.LikeArticleRepository;
 import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.exception.ConflictException;
 import com.example.anyword.shared.exception.NotFoundException;
+import com.example.anyword.shared.exception.UnauthorizedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +36,7 @@ public class LikeService {
     ArticleEntity article = articleRepository.findById(articleId)
         .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
-    UserEntity me = userRepository.getReferenceById(userId);
+    UserEntity me = userRepository.findById(userId).orElseThrow(()-> new UnauthorizedException(USER_NOT_FOUND));
 
     if (likeRepository.existsByArticleAndAuthor(article, me)) {
       throw new ConflictException(ALREADY_EXISTS);
@@ -49,7 +51,7 @@ public class LikeService {
     ArticleEntity article = articleRepository.findById(articleId)
         .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
-    UserEntity me = userRepository.getReferenceById(userId);
+    UserEntity me = userRepository.findById(userId).orElseThrow(()-> new UnauthorizedException(USER_NOT_FOUND));
 
     boolean deleted = likeRepository.deleteByArticleAndAuthor(article, me);
 

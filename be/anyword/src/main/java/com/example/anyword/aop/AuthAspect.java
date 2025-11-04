@@ -1,8 +1,6 @@
 package com.example.anyword.aop;
 import static com.example.anyword.shared.constants.ResponseMessage.UNAUTHORIZED;
-import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
-import com.example.anyword.entity.UserEntity;
 import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.constants.Key;
 import com.example.anyword.shared.exception.UnauthorizedException;
@@ -54,6 +52,5 @@ public class AuthAspect {
 
     Long userId = Optional.ofNullable((Long) session.getAttribute(Key.SESSION_USER_ID)).orElseThrow(()->
         new UnauthorizedException(UNAUTHORIZED));
-    UserEntity user = userRepository.findById(userId).orElseThrow(()-> new UnauthorizedException(USER_NOT_FOUND));
   }
 }

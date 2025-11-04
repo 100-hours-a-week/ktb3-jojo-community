@@ -7,6 +7,7 @@ import static com.example.anyword.service.utils.ArticleUtils.validateSort;
 import static com.example.anyword.shared.constants.PageConstants.SORT_POPULARITY;
 import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_NOT_FOUND;
 import static com.example.anyword.shared.constants.ResponseMessage.FORBIDDEN;
+import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
 import com.example.anyword.dto.article.ArticleListItemDto;
 import com.example.anyword.dto.article.ArticleStatusInfoDto;
@@ -29,6 +30,7 @@ import com.example.anyword.repository.like.LikeArticleRepository;
 import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.exception.ForbiddenException;
 import com.example.anyword.shared.exception.NotFoundException;
+import com.example.anyword.shared.exception.UnauthorizedException;
 import com.example.anyword.shared.utils.RowsUtil;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +65,7 @@ public class ArticleService {
   @Transactional
   public PostArticleResponseDto createArticle(Long userId, PostArticleRequestDto request){
 
-    UserEntity author = userRepository.getReferenceById(userId);
+    UserEntity author = userRepository.findById(userId).orElseThrow();
     ArticleEntity article = new ArticleEntity(author, request.getTitle(), request.getContent());
     ArticleEntity saved = articleRepository.save(article);
 
@@ -143,7 +145,7 @@ public class ArticleService {
     ArticleStatusInfoDto status = new ArticleStatusInfoDto(likesCount, commentsCount, article.getViewCnt());
 
     boolean likedByMe = (currentUserId != null)
-        && likeRepository.existsByArticleAndAuthor(article, userRepository.getReferenceById(currentUserId));
+        && likeRepository.existsByArticleAndAuthor(article, userRepository.findById(currentUserId).orElseThrow(()-> new UnauthorizedException(USER_NOT_FOUND)));
 
     Long authorId = article.getAuthor().getId();
     boolean isMyContents = authorId.equals(currentUserId);
