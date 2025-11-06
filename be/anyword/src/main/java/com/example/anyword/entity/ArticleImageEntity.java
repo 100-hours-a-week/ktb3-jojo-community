@@ -27,7 +27,7 @@ public class ArticleImageEntity implements BaseEntity<Long> {
   @JoinColumn(name="article_id", nullable = false)
   private ArticleEntity article;
 
-  @Column(nullable = false) @Setter
+  @Column(name="image_url", nullable = false) @Setter
   private String imageURL;
 
   @Column(nullable = false) @Setter

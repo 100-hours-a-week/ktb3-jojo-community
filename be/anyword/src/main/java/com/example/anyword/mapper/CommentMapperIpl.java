@@ -63,8 +63,8 @@ public class CommentMapperIpl implements CommentMapper {
    */
   @Override
   public CreateCommentResponseDto toResponse(CommentEntity comment){
-    Long authorId = comment.getAuthor().getId();
-    return new CreateCommentResponseDto(comment.getId(), authorId);
+    Long articleId = comment.getArticle().getId();
+    return new CreateCommentResponseDto(comment.getId(), articleId);
   }
 
   /**

@@ -52,8 +52,9 @@ public class LikeService {
         .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
     UserEntity me = userRepository.findById(userId).orElseThrow(()-> new UnauthorizedException(USER_NOT_FOUND));
+    int deleteRow = likeRepository.deleteByIds(articleId, userId);
 
-    boolean deleted = likeRepository.deleteByArticleAndAuthor(article, me);
+    boolean deleted = deleteRow == 1;
 
     if (!deleted) {
       throw new NotFoundException(LIKED_NOT_FOUND);
