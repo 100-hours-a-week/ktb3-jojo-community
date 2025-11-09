@@ -128,7 +128,7 @@ public class ArticleService {
   }
 
 
-  @Transactional(readOnly = true)
+  @Transactional
   public GetArticleResponseDto getArticle(Long articleId, Long currentUserId) {
     ArticleEntity article = articleRepository.findById(articleId)
         .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
