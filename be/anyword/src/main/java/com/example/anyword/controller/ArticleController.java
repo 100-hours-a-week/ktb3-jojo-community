@@ -17,7 +17,6 @@ import com.example.anyword.dto.article.response.PutArticleResponseDto;
 import com.example.anyword.service.ArticleService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;

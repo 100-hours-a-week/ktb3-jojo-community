@@ -13,8 +13,14 @@ import org.springframework.data.repository.query.Param;
 public interface LikeArticleRepository extends JpaRepository<LikeArticleEntity, Long> {
   @Query("select count(l) from LikeArticleEntity l where l.article.id in (:article_id)")
   long countByArticleId(@Param("article_id") Long articleId);
-  @Query("select count(l) from LikeArticleEntity l where l.article.id in (:article_id) group by l.article.id")
-  List<Object[]> bulkCountByArticleId(@Param("article_id") List<Long> articleId);
+
+  @Query("""
+  select l.article.id, count(l)
+  from LikeArticleEntity l
+  where l.article.id in :articleIds
+  group by l.article.id
+""")
+  List<Object[]> bulkCountByArticleId(@Param("articleIds") List<Long> articleId);
   boolean existsByArticleAndAuthor(ArticleEntity article, UserEntity author);
 
   @Modifying

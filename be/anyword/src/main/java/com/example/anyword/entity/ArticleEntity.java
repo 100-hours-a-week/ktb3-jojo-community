@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -50,7 +51,7 @@ public class ArticleEntity implements BaseEntity<Long> {
 
   @OneToMany(mappedBy = "article")
   @BatchSize(size=20)
-  private List<ArticleImageEntity> articleImageEntities;
+  private List<ArticleImageEntity> articleImageEntities = new ArrayList<>();
 
   public ArticleEntity(UserEntity author, String title, String contents){
     this.author = author;
