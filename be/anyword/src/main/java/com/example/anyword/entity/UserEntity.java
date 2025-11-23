@@ -32,7 +32,7 @@ public class UserEntity implements BaseEntity<Long> {
   @Column(unique = true, nullable = false, length = 20)
   private String nickname;
 
-  @Column(nullable = false, length = 512)
+  @Column(nullable = false, columnDefinition = "TEXT")
   private String profileImageUrl;
 
   @OneToMany(mappedBy = "author")
