@@ -1,15 +1,15 @@
 package com.example.anyword.mapper;
 
-import com.example.anyword.dto.article.ArticleListItem;
-import com.example.anyword.dto.article.ArticleStatusInfo;
-import com.example.anyword.dto.article.AuthorInfo;
-import com.example.anyword.dto.article.PageInfo;
+import com.example.anyword.dto.article.ArticleListItemDto;
+import com.example.anyword.dto.article.ArticleStatusInfoDto;
+import com.example.anyword.dto.article.AuthorInfoDto;
+import com.example.anyword.dto.article.PageInfoDto;
 import com.example.anyword.dto.article.response.GetArticleListResponseDto;
 import com.example.anyword.dto.article.response.GetArticleResponseDto;
 import com.example.anyword.dto.article.response.PostArticleResponseDto;
 import com.example.anyword.dto.article.response.PutArticleResponseDto;
 import com.example.anyword.entity.ArticleEntity;
-import io.micrometer.common.lang.Nullable;
+import com.example.anyword.entity.ArticleImageEntity;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -19,15 +19,29 @@ public class ArticleMapperIpl implements ArticleMapper {
   @Override
   public GetArticleResponseDto toGetArticleResponse(
       ArticleEntity article,
-      AuthorInfo author,
-      ArticleStatusInfo status,
+      AuthorInfoDto author,
+      ArticleStatusInfoDto status,
       boolean likedByMe,
-      boolean isMyContents,
-      @Nullable List<String> imageUrls
+      boolean isMyContents
   ) {
     if (article == null) return null;
-    return GetArticleResponseDto.from(article, author, status, likedByMe, isMyContents,
-        imageUrls == null ? List.of() : imageUrls);
+
+    List<String> imageUrls = article.getArticleImageEntities() == null ? List.of()
+        : article.getArticleImageEntities().stream().map(ArticleImageEntity::getImageURL).toList();
+
+
+    return  new GetArticleResponseDto(
+        article.getId(),
+        article.getTitle(),
+        article.getContents(),
+        author,
+        status,
+        article.getCreatedAt(),
+        article.getUpdatedAt(),
+        imageUrls,
+        likedByMe,
+        isMyContents
+    );
   }
 
 
@@ -48,12 +62,15 @@ public class ArticleMapperIpl implements ArticleMapper {
   /** 게시글 목록 응답 매핑 (리스트 아이템은 이미 구성되어 있다고 가정) */
   @Override
   public GetArticleListResponseDto toGetArticleListResponse(
-      List<ArticleListItem> items,
-      PageInfo pageInfo
+      List<ArticleListItemDto> items,
+      PageInfoDto pageInfoDto
   ) {
     return new GetArticleListResponseDto(
         items == null ? List.of() : items,
-        pageInfo
+        pageInfoDto
     );
   }
+
+
+
 }

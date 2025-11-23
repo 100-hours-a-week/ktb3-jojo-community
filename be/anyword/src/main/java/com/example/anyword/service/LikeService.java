@@ -3,12 +3,17 @@ package com.example.anyword.service;
 import static com.example.anyword.shared.constants.ResponseMessage.ALREADY_EXISTS;
 import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_NOT_FOUND;
 import static com.example.anyword.shared.constants.ResponseMessage.LIKED_NOT_FOUND;
+import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
+import com.example.anyword.entity.ArticleEntity;
 import com.example.anyword.entity.LikeArticleEntity;
+import com.example.anyword.entity.UserEntity;
 import com.example.anyword.repository.article.ArticleRepository;
 import com.example.anyword.repository.like.LikeArticleRepository;
+import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.exception.ConflictException;
 import com.example.anyword.shared.exception.NotFoundException;
+import com.example.anyword.shared.exception.UnauthorizedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,32 +22,39 @@ public class LikeService {
 
   private final LikeArticleRepository likeRepository;
   private final ArticleRepository articleRepository;
+  private final UserRepository userRepository;
 
-  public LikeService(LikeArticleRepository likeRepository, ArticleRepository articleRepository) {
+  public LikeService(LikeArticleRepository likeRepository, ArticleRepository articleRepository,
+      UserRepository userRepository) {
     this.likeRepository = likeRepository;
     this.articleRepository = articleRepository;
+    this.userRepository = userRepository;
   }
 
   @Transactional
-  public boolean addLike(Long articleId, Long userId) {
-    articleRepository.findById(articleId)
+  public void addLike(Long articleId, Long userId) {
+    ArticleEntity article = articleRepository.findById(articleId)
         .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
-    if (likeRepository.existsByArticleIdAndUserId(articleId, userId)) {
+    UserEntity me = userRepository.findById(userId).orElseThrow(()-> new UnauthorizedException(USER_NOT_FOUND));
+
+    if (likeRepository.existsByArticleAndAuthor(article, me)) {
       throw new ConflictException(ALREADY_EXISTS);
     }
 
-    LikeArticleEntity like = new LikeArticleEntity(articleId, userId);
+    LikeArticleEntity like = new LikeArticleEntity(article, me);
     likeRepository.save(like);
-    return true;
-  };
+  }
 
   @Transactional
   public void removeLike(Long articleId, Long userId) {
-    articleRepository.findById(articleId)
+    ArticleEntity article = articleRepository.findById(articleId)
         .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
-    boolean deleted = likeRepository.deleteByArticleIdAndUserId(articleId, userId);
+    UserEntity me = userRepository.findById(userId).orElseThrow(()-> new UnauthorizedException(USER_NOT_FOUND));
+    int deleteRow = likeRepository.deleteByIds(articleId, userId);
+
+    boolean deleted = deleteRow == 1;
 
     if (!deleted) {
       throw new NotFoundException(LIKED_NOT_FOUND);

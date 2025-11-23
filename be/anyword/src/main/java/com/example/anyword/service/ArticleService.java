@@ -9,10 +9,10 @@ import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_NOT_F
 import static com.example.anyword.shared.constants.ResponseMessage.FORBIDDEN;
 import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
-import com.example.anyword.dto.article.ArticleListItem;
-import com.example.anyword.dto.article.ArticleStatusInfo;
-import com.example.anyword.dto.article.AuthorInfo;
-import com.example.anyword.dto.article.PageInfo;
+import com.example.anyword.dto.article.ArticleListItemDto;
+import com.example.anyword.dto.article.ArticleStatusInfoDto;
+import com.example.anyword.dto.article.AuthorInfoDto;
+import com.example.anyword.dto.article.PageInfoDto;
 import com.example.anyword.dto.article.response.GetArticleListResponseDto;
 import com.example.anyword.dto.article.response.GetArticleResponseDto;
 import com.example.anyword.dto.article.request.PostArticleRequestDto;
@@ -30,7 +30,13 @@ import com.example.anyword.repository.like.LikeArticleRepository;
 import com.example.anyword.repository.user.UserRepository;
 import com.example.anyword.shared.exception.ForbiddenException;
 import com.example.anyword.shared.exception.NotFoundException;
+import com.example.anyword.shared.exception.UnauthorizedException;
+import com.example.anyword.shared.utils.RowsUtil;
 import java.util.List;
+import java.util.Map;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,12 +64,14 @@ public class ArticleService {
 
   @Transactional
   public PostArticleResponseDto createArticle(Long userId, PostArticleRequestDto request){
-    ArticleEntity article = request.toEntity(userId);
+
+    UserEntity author = userRepository.findById(userId).orElseThrow();
+    ArticleEntity article = new ArticleEntity(author, request.getTitle(), request.getContent());
     ArticleEntity saved = articleRepository.save(article);
 
     if (request.getImageUrls()!= null && !request.getImageUrls().isEmpty()){
       for (String imageUrl : request.getImageUrls()){
-        ArticleImageEntity image = new ArticleImageEntity(saved.getId(), imageUrl);
+        ArticleImageEntity image = new ArticleImageEntity(saved, imageUrl);
         imageRepository.save(image);
       }
     }
@@ -74,15 +82,16 @@ public class ArticleService {
   @Transactional
   public PutArticleResponseDto putArticle(Long userId, Long articleId, PutArticleRequestDto request) {
     ArticleEntity article = findArticle(articleId);
+    Long authorId = article.getAuthor().getId();
 
-    if (!article.getUserId().equals(userId)) {
+    if (!authorId.equals(userId)) {
       throw new ForbiddenException(FORBIDDEN);
     }
 
     String newTitle = merge(request.getTitle(), article.getTitle());
     String newContent = merge(request.getContents(), article.getContents());
 
-    ArticleEntity updated = ArticleEntity.copyWith(article, newTitle, newContent);
+    ArticleEntity updated = article.copyWith(newTitle, newContent);
     ArticleEntity saved = articleRepository.save(updated);
 
     if (request.getImageUrls()!=null) {
@@ -90,7 +99,7 @@ public class ArticleService {
       imageRepository.deleteByArticleId(articleId);
 
       for (String imageUrl : request.getImageUrls()) {
-        ArticleImageEntity image = new ArticleImageEntity(articleId, imageUrl);
+        ArticleImageEntity image = new ArticleImageEntity(article, imageUrl);
         imageRepository.save(image);
       }
 
@@ -103,8 +112,9 @@ public class ArticleService {
   public void deleteArticle(Long userId, Long articleId) {
 
     ArticleEntity article = findArticle(articleId);
+    Long authorId = article.getAuthor().getId();
 
-    if (!article.getUserId().equals(userId)) {
+    if (!authorId.equals(userId)) {
       throw new ForbiddenException(FORBIDDEN);
     }
 
@@ -125,26 +135,23 @@ public class ArticleService {
 
     article.incrementViews();
 
-     UserEntity author = userRepository.findById(article.getUserId())
-         .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+    UserEntity author = article.getAuthor();
 
-     AuthorInfo authorInfo = AuthorInfo.from(author);
+    AuthorInfoDto authorInfoDto = AuthorInfoDto.from(author);
 
-     long likesCount = likeRepository.countByArticleId(articleId);
-     long commentsCount = commentRepository.countByArticleId(articleId);
+    long likesCount = likeRepository.countByArticleId(articleId);
+    long commentsCount = commentRepository.countByArticleId(articleId);
 
-    ArticleStatusInfo status = new ArticleStatusInfo(likesCount, commentsCount, article.getViewCnt());
+    ArticleStatusInfoDto status = new ArticleStatusInfoDto(likesCount, commentsCount, article.getViewCnt());
 
     boolean likedByMe = (currentUserId != null)
-        && likeRepository.existsByArticleIdAndUserId(articleId, currentUserId);
+        && likeRepository.existsByArticleAndAuthor(article, userRepository.findById(currentUserId).orElseThrow(()-> new UnauthorizedException(USER_NOT_FOUND)));
 
-    boolean isMyContents = article.getUserId().equals(currentUserId);
+    Long authorId = article.getAuthor().getId();
+    boolean isMyContents = authorId.equals(currentUserId);
 
-    List<String> imageUrls = imageRepository.findByArticleId(articleId);
-
-    //TODO: 다른 부분도 정적 팩토리 메서드 패턴으로 변경
     return articleMapper.toGetArticleResponse(
-        article, authorInfo, status, likedByMe, isMyContents, imageUrls
+        article, authorInfoDto, status, likedByMe, isMyContents
     );
   }
 
@@ -152,48 +159,53 @@ public class ArticleService {
   /**
    * 게시글 목록 조회
    */
+  @Transactional(readOnly = true)
   public GetArticleListResponseDto getArticleList(Integer currentPage, Integer pageSize, String sort) {
     int validPage = validatePage(currentPage);
     int validPageSize = validatePageSize(pageSize);
     String validSort = validateSort(sort);
 
+    Pageable pageable = PageRequest.of(validPage - 1, pageSize, Sort.by(sort).descending());
+
 
     List<ArticleEntity> articles;
     if (SORT_POPULARITY.equals(validSort)) {
-      articles = articleRepository.findAllOrderByPopularity(validPage - 1, validPageSize);
+      articles = articleRepository.findAllByOrderByViewCntDesc(pageable);
     } else {
-      articles = articleRepository.findAllByOrderByCreatedAtDesc(validPage - 1, validPageSize);
+      articles = articleRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
 
-    List<ArticleListItem> items = articles.stream()
-        .map(this::convertToListItemDto)
+    List<Long> articleIds = articles.stream().map((ArticleEntity::getId)).toList();
+
+    Map<Long, Long> likeMap = RowsUtil.toIdCountMap(likeRepository.bulkCountByArticleId(articleIds));
+    Map<Long, Long> commentMap  = RowsUtil.toIdCountMap(commentRepository.bulkCountByArticleId(articleIds));
+
+    List<ArticleListItemDto> items = articles.stream()
+        .map(article -> convertToListItemDto(article, likeMap.getOrDefault(article.getId(), 0L), commentMap.getOrDefault(article.getId(), 0L)))
         .toList();
+
 
     long totalCount = articleRepository.count();
     boolean hasNext = (long) validPage * validPageSize < totalCount;
 
-    PageInfo pageInfo = new PageInfo(
+    PageInfoDto pageInfoDto = new PageInfoDto(
         hasNext ? validPage + 1 : null,
         hasNext,
         validPageSize
     );
 
-    return articleMapper.toGetArticleListResponse(items, pageInfo);
+    return articleMapper.toGetArticleListResponse(items, pageInfoDto);
   }
 
-  private ArticleListItem convertToListItemDto(ArticleEntity article) {
-    UserEntity author = userRepository.findById(article.getUserId())
-        .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+  private ArticleListItemDto convertToListItemDto(ArticleEntity article, Long likeCounts, Long commentCounts) {
+    UserEntity author =  article.getAuthor();
 
-    AuthorInfo authorInfo = new AuthorInfo(author.getId(), author.getNickname(),
+    AuthorInfoDto authorInfoDto = new AuthorInfoDto(author.getId(), author.getNickname(),
         author.getProfileImageUrl());
 
-    long likesCount = likeRepository.countByArticleId(article.getId());
-    long commentsCount = commentRepository.countByArticleId(article.getId());
+    ArticleStatusInfoDto status = new ArticleStatusInfoDto(likeCounts, commentCounts, article.getViewCnt());
 
-    ArticleStatusInfo status = new ArticleStatusInfo(likesCount, commentsCount, article.getViewCnt());
-
-    return ArticleListItem.from(article, authorInfo, status);
+    return ArticleListItemDto.from(article, authorInfoDto, status);
   }
 
 }

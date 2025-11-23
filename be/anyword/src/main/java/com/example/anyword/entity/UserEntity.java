@@ -1,12 +1,42 @@
 package com.example.anyword.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+@Entity
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity implements BaseEntity<Long> {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(unique = true, nullable = false)
   private Long id; //PK
 
-  private final String email;
-  private final String password; //해싱
-  private final String nickname;
-  private final String profileImageUrl;
+  @Column(unique = true, nullable = false)
+  private String email;
+
+  @Column(nullable = false)
+  private String password; //해싱
+
+  @Column(unique = true, nullable = false, length = 20)
+  private String nickname;
+
+  @Column(nullable = false, columnDefinition = "TEXT")
+  private String profileImageUrl;
+
+  @OneToMany(mappedBy = "author")
+  private List<ArticleEntity> articles = new ArrayList<>();
 
   // 데이터 저장을 위한 생성자 (ID 제외)
   public UserEntity(String email, String password, String nickname, String profileImageUrl) {
@@ -24,49 +54,21 @@ public class UserEntity implements BaseEntity<Long> {
     this.profileImageUrl = profileImageUrl;
   }
 
-
-  @Override
-  public Long getId() {
-    return id;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public String getNickname() {
-    return nickname;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public String getProfileImageUrl() {
-    return profileImageUrl;
-  }
-
-
-  @Override
-  public void setId(Long userId) {
-    this.id = userId;
-  }
-
   //setter 사용 x, patch
-  public static UserEntity copyWith(
-      UserEntity original,
+  public UserEntity copyWith(
       String email,
       String password,
       String nickname,
       String profileImageUrl) {
 
-    return new UserEntity(
-        original.getId(),
-        email != null ? email : original.email,
-        password != null ? password : original.password,
-        nickname != null ? nickname : original.nickname,
-        profileImageUrl != null ? profileImageUrl : original.profileImageUrl
-    );
+    //TODO: setter 사용이 최선인가 ..
+    this.setEmail(email != null ? email : this.email);
+    this.setPassword(password != null ? password : this.password);
+    this.setNickname(nickname != null ? nickname : this.nickname);
+    this. setProfileImageUrl(profileImageUrl != null ? profileImageUrl : this.profileImageUrl);
+
+    return this;
   }
+
 
 }

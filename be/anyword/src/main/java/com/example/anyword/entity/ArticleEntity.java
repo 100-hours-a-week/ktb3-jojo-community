@@ -1,27 +1,60 @@
 package com.example.anyword.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ArticleEntity implements BaseEntity<Long> {
-  private Long id; //PK - 초기에 null ..?
+  @Id @Setter @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(unique = true, nullable = false)
+  private Long id; //PK
 
-  private Long userId; //FK
+  @ManyToOne
+  @JoinColumn(name="user_id", nullable = false) @Setter
+  private UserEntity author; //FK
 
+  @Column(nullable = false) @Setter
   private String title;
+
+  @Column(nullable = false, columnDefinition = "TEXT") @Setter
   private String contents;
+
+  @Column(nullable = false) @Setter
   private long viewCnt;
 
+  @Column(nullable = false)
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
 
+  @Column(nullable = false) @Setter
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime updatedAt;
 
-  public ArticleEntity(){};
+  @OneToMany(mappedBy = "article")
+  @BatchSize(size=20)
+  private List<ArticleImageEntity> articleImageEntities = new ArrayList<>();
 
-  public ArticleEntity(Long userId, String title, String contents){
-    this.userId = userId;
+  public ArticleEntity(UserEntity author, String title, String contents){
+    this.author = author;
     this.title = title;
     this.contents = contents;
     this.viewCnt = 0;
@@ -29,79 +62,16 @@ public class ArticleEntity implements BaseEntity<Long> {
     this.updatedAt = LocalDateTime.now();
   }
 
-  private ArticleEntity(Long id, Long userId, String title, String contents,
-      long viewCnt, LocalDateTime createdAt, LocalDateTime updatedAt) {
-    this.id = id;
-    this.userId = userId;
-    this.title = title;
-    this.contents = contents;
-    this.viewCnt = viewCnt;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
+  //TODO: setter 사용이 최선?
+  public ArticleEntity copyWith(String newTitle, String newContent) {
+    this.setTitle(newTitle);
+    this.setContents(newContent);
 
-  public static ArticleEntity copyWith(ArticleEntity original, String newTitle, String newContent) {
-    return new ArticleEntity(
-        original.getId(),
-        original.getUserId(),
-        newTitle != null ? newTitle : original.getTitle(),
-        newContent != null ? newContent : original.getContents(),
-        original.getViewCnt(),
-        original.getCreatedAt(),
-        LocalDateTime.now()
-    );
+    return this;
   }
 
   public void incrementViews() {
     this.viewCnt++;
   }
 
-  @Override
-  public Long getId() {
-    return id;
-  }
-
-  public Long getUserId() {
-    return userId;
-  }
-
-  public long getViewCnt() {
-    return viewCnt;
-  }
-
-  public String getContents() {
-    return contents;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public LocalDateTime getUpdatedAt() {
-    return updatedAt;
-  }
-
-
-  @Override
-  public void setId(Long articleId) {
-    this.id = articleId;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public void setContents(String contents) {
-    this.contents = contents;
-  }
-
-  public void setViewCnt(Long viewCnt) {
-    this.viewCnt = viewCnt;
-  }
-
-  public void setUpdatedAt(LocalDateTime time){this.updatedAt = time;}
 }

@@ -3,7 +3,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
 
+@Getter
 public class SignupRequestDto {
   @NotBlank
   @Email
@@ -28,19 +30,4 @@ public class SignupRequestDto {
     this.profileImageUrl = profileImageUrl;
   }
 
-  public String getEmail() {
-    return email;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public String getNickname() {
-    return nickname;
-  }
-
-  public String getProfileImageUrl() {
-    return profileImageUrl;
-  }
 }

@@ -3,7 +3,9 @@ package com.example.anyword.dto.user.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
 
+@Getter
 public class LoginRequestDto {
   @NotBlank
   @Email
@@ -20,11 +22,4 @@ public class LoginRequestDto {
   }
 
 
-  public String getEmail() {
-    return email;
-  }
-
-  public String getPassword(){
-    return password;
-  }
 }

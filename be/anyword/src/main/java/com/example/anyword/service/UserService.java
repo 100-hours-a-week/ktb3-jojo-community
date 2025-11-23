@@ -2,12 +2,11 @@ package com.example.anyword.service;
 
 import static com.example.anyword.shared.constants.Key.SESSION_USER_ID;
 import static com.example.anyword.shared.constants.ResponseMessage.EMAIL_DUPLICATE;
-import static com.example.anyword.shared.constants.ResponseMessage.FAIL;
 import static com.example.anyword.shared.constants.ResponseMessage.NICKNAME_DUPLICATE;
 import static com.example.anyword.shared.constants.ResponseMessage.SESSION_EXPIRED;
 import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
-import com.example.anyword.dto.article.AuthorInfo;
+import com.example.anyword.dto.article.AuthorInfoDto;
 import com.example.anyword.dto.user.request.PutUserRequestDto;
 import com.example.anyword.dto.user.request.SignupRequestDto;
 import com.example.anyword.dto.user.request.LoginRequestDto;
@@ -39,11 +38,11 @@ public class UserService {
    */
   @Transactional
   public SignupResponseDto signup(SignupRequestDto dto){ //dto 로 변경 ...?
-    if (userRepository.isEmailExist(dto.getEmail())){
+    if (userRepository.existsByEmail(dto.getEmail())){
       throw new ConflictException(EMAIL_DUPLICATE);
     }
 
-    if (userRepository.isNicknameExist(dto.getNickname())){
+    if (userRepository.existsByNickname(dto.getNickname())){
       throw new ConflictException(NICKNAME_DUPLICATE);
     }
 
@@ -59,6 +58,7 @@ public class UserService {
   }
 
 
+  @Transactional(readOnly = true)
   public UserResponseDto login(LoginRequestDto dto){
     UserEntity foundUser = userRepository.findByEmail(dto.getEmail()).orElseThrow(()->
         new BadRequestException(USER_NOT_FOUND));
@@ -94,6 +94,7 @@ public class UserService {
     return incoming.trim();
   }
 
+
   @Transactional
   public UserResponseDto putUser(HttpSession session, PutUserRequestDto request){
     UserEntity original = this.getUserFromSession(session);
@@ -102,39 +103,37 @@ public class UserService {
     String newNickname = merge(request.getNickname(), original.getNickname());
     String newProfile = merge(request.getProfileImageUrl(), original.getProfileImageUrl());
     String newPassword = merge(request.getPassword(), original.getPassword());
-    if (!Objects.requireNonNull(newEmail).equals(original.getEmail()) && userRepository.isEmailExist(newEmail)) {
+    if (!Objects.requireNonNull(newEmail).equals(original.getEmail()) && userRepository.existsByEmail(newEmail)) {
       throw new ConflictException(EMAIL_DUPLICATE);
     }
 
-    if (!Objects.requireNonNull(newNickname).equals(original.getNickname()) && userRepository.isNicknameExist(newNickname)) {
+    if (!Objects.requireNonNull(newNickname).equals(original.getNickname()) && userRepository.existsByNickname(newNickname)) {
       throw new ConflictException(NICKNAME_DUPLICATE);
     }
 
+    UserEntity updated = original.copyWith(newEmail, newPassword, newNickname, newProfile);
 
-    UserEntity updated = UserEntity.copyWith(original, newEmail, newPassword, newNickname, newProfile);
 
-    return userMapper.toUserResponseDto(userRepository.save(updated));
+    return userMapper.toUserResponseDto(updated);
   }
 
 
   @Transactional
   public void signout(HttpSession session){
     Long userId = (Long) session.getAttribute(SESSION_USER_ID);
-
-    if (!userRepository.deleteById(userId)){
-      throw new BadRequestException(FAIL);
-    }
+    userRepository.deleteById(userId);
 
     session.invalidate();
   }
 
-  public AuthorInfo UserIdToAuthorInfo(Long userId){
+  @Transactional(readOnly = true)
+  public AuthorInfoDto UserIdToAuthorInfo(Long userId){
     UserEntity author = userRepository.findById(userId)
         .orElse(null); //탈퇴한 회원인 경우 exception 이 발생하면 안됨
     if (author == null){
-      return new AuthorInfo(0L, "탈퇴한 회원", ""); //TODO: 탈퇴한 회원 정보 상수화
+      return new AuthorInfoDto(0L, "탈퇴한 회원", ""); //TODO: 탈퇴한 회원 정보 상수화
     }
-    return new AuthorInfo(author.getId(), author.getNickname(), author.getProfileImageUrl());
+    return new AuthorInfoDto(author.getId(), author.getNickname(), author.getProfileImageUrl());
   }
 
 }

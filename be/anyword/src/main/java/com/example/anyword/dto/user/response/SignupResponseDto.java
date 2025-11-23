@@ -1,5 +1,8 @@
 package com.example.anyword.dto.user.response;
 
+import lombok.Getter;
+
+@Getter
 public class SignupResponseDto {
   private final Long userId;
 
@@ -7,7 +10,4 @@ public class SignupResponseDto {
     this.userId = userId;
   }
 
-  public Long getUserId() {
-    return userId;
-  }
 }

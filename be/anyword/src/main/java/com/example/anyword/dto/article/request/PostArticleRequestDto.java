@@ -5,7 +5,9 @@ import com.example.anyword.shared.constants.ValidErrorMessage;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class PostArticleRequestDto {
   @NotBlank(message=ValidErrorMessage.NO_TITLE_OR_CONTENTS)
   @Size(max = 26)
@@ -20,21 +22,5 @@ public class PostArticleRequestDto {
     this.title = title;
     this.content = content;
     this.imageUrls = imageUrls;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public String getContent() {
-    return content;
-  }
-
-  public List<String> getImageUrls() {
-    return imageUrls;
-  }
-
-  public ArticleEntity toEntity(Long userId){
-    return new ArticleEntity(userId, this.getTitle(), this.getContent());
   }
 }

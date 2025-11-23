@@ -3,7 +3,9 @@ package com.example.anyword.dto.article.request;
 import com.example.anyword.entity.ArticleEntity;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class PutArticleRequestDto {
   @Size(max = 26)
   private String title;
@@ -16,19 +18,4 @@ public class PutArticleRequestDto {
   public PutArticleRequestDto() {}
 
 
-  public String getTitle() {
-    return title;
-  }
-
-  public String getContents() {
-    return contents;
-  }
-
-  public List<String> getImageUrls() {
-    return imageUrls;
-  }
-
-  public ArticleEntity toEntity(Long userId){
-    return new ArticleEntity(userId, this.getTitle(), this.getContents());
-  }
 }

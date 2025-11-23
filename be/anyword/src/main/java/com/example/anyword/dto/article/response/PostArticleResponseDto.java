@@ -1,5 +1,8 @@
 package com.example.anyword.dto.article.response;
 
+import lombok.Getter;
+
+@Getter
 public class PostArticleResponseDto {
   private final Long articleId;
 
@@ -7,7 +10,4 @@ public class PostArticleResponseDto {
     this.articleId = articleId;
   }
 
-  public Long getArticleId() {
-    return articleId;
-  }
 }

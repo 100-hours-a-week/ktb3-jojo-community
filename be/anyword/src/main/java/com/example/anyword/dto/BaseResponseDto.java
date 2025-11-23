@@ -1,5 +1,8 @@
 package com.example.anyword.dto;
 
+import lombok.Getter;
+
+@Getter
 public class BaseResponseDto<T> {
   private final String message;
   private final T data;
@@ -14,11 +17,4 @@ public class BaseResponseDto<T> {
     this.data = null;
   }
 
-  public String getMessage() {
-    return message;
-  }
-
-  public T getData() {
-    return data;
-  }
 }
