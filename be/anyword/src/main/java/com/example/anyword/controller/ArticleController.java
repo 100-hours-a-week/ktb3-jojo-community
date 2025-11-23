@@ -49,9 +49,8 @@ public class ArticleController {
     Long userId = (Long) session.getAttribute(SESSION_USER_ID);
     PostArticleResponseDto response = articleService.createArticle(userId, request);
 
-    return ResponseEntity
-        .created(URI.create("/api/article/"+response.getArticleId()))
-        .body(new BaseResponseDto<>(ARTICLE_CREATE_SUCCESS, response));
+
+    return ResponseEntity.ok(new BaseResponseDto<>(ARTICLE_CREATE_SUCCESS, response));
   }
 
   @GetMapping("/{articleId}")

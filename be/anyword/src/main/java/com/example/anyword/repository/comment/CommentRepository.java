@@ -16,5 +16,5 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
   group by c.article.id
 """)
   List<Object[]> bulkCountByArticleId(@Param("articleIds") List<Long> articleIds);
-  List<CommentEntity> findAllByArticleIdOrderByCreatedAtDesc(Long articleId);
+  List<CommentEntity> findAllByArticleIdOrderByCreatedAtAsc(Long articleId);
 }

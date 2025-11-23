@@ -8,6 +8,7 @@ import static com.example.anyword.shared.constants.ResponseMessage.COMMENT_UPDAT
 
 import com.example.anyword.aop.Authable;
 import com.example.anyword.dto.BaseResponseDto;
+import com.example.anyword.dto.comment.CommentItemDto;
 import com.example.anyword.dto.comment.CommentRequestDto;
 import com.example.anyword.dto.comment.CreateCommentResponseDto;
 import com.example.anyword.dto.comment.GetCommentListResponseDto;
@@ -51,13 +52,13 @@ public class CommentController {
 
   @Authable
   @PostMapping("/{articleId}")
-  public ResponseEntity<BaseResponseDto<CreateCommentResponseDto>> createComment(
+  public ResponseEntity<BaseResponseDto<CommentItemDto>> createComment(
       HttpSession session,
       @PathVariable Long articleId,
       @Valid @RequestBody CommentRequestDto request
       ) {
     Long userId = (Long) session.getAttribute(SESSION_USER_ID);
-    CreateCommentResponseDto response = commentService.createComment(articleId, userId, request);
+    CommentItemDto response = commentService.createComment(articleId, userId, request);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDto<>(COMMENT_CREATED_SUCCESS, response));
   }

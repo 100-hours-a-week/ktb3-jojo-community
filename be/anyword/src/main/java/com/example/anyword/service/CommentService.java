@@ -5,6 +5,7 @@ import static com.example.anyword.shared.constants.ResponseMessage.COMMENT_NOT_F
 import static com.example.anyword.shared.constants.ResponseMessage.FORBIDDEN;
 import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
+import com.example.anyword.dto.comment.CommentItemDto;
 import com.example.anyword.dto.comment.CommentRequestDto;
 import com.example.anyword.dto.comment.CreateCommentResponseDto;
 import com.example.anyword.dto.comment.GetCommentListResponseDto;
@@ -59,12 +60,12 @@ public class CommentService {
 
 
   @Transactional
-  public CreateCommentResponseDto createComment(Long articleId, Long userId, CommentRequestDto request) {
+  public CommentItemDto createComment(Long articleId, Long userId, CommentRequestDto request) {
     ArticleEntity article = findArticle(articleId);
     UserEntity author = userRepository.findById(userId).orElseThrow(()-> new UnauthorizedException(USER_NOT_FOUND));
     CommentEntity saved = commentRepository.save(new CommentEntity(article, author, request.getContent()));
 
-    return commentMapper.toResponse(saved);
+    return commentMapper.toItem(saved, userId);
   }
 
   @Transactional
@@ -93,7 +94,7 @@ public class CommentService {
   @Transactional(readOnly = true)
   public GetCommentListResponseDto getCommentsList(Long articleId, Long currentUserId) {
     findArticle(articleId);
-    List<CommentEntity> comments = commentRepository.findAllByArticleIdOrderByCreatedAtDesc(articleId);
+    List<CommentEntity> comments = commentRepository.findAllByArticleIdOrderByCreatedAtAsc(articleId);
     return commentMapper.toListResponse(articleId, comments, currentUserId);
   }
 
