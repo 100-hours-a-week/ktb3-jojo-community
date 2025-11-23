@@ -22,7 +22,9 @@ public class WebSecurityConfig {
   CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(List.of("http://127.0.0.1:5500"));
-    configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "PATCH", "DELETE"));
+    configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(List.of("*"));
+    configuration.setAllowCredentials(true);
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
@@ -32,10 +34,9 @@ public class WebSecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-
     httpSecurity
-//        .cors((cors) -> cors.disable()); //CORS 통합 끄기
-        .csrf(csrf -> csrf.disable());
+        .cors((cors) -> {})
+        .csrf(csrf -> csrf.disable()); //TODO: 임시
 
 
 
