@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -37,6 +38,9 @@ public class UserEntity implements BaseEntity<Long> {
 
   @OneToMany(mappedBy = "author")
   private List<ArticleEntity> articles = new ArrayList<>();
+
+  @OneToOne(mappedBy = "user")
+  private RefreshTokenEntity refreshToken;
 
   // 데이터 저장을 위한 생성자 (ID 제외)
   public UserEntity(String email, String password, String nickname, String profileImageUrl) {
