@@ -1,4 +1,4 @@
-package com.example.anyword.config;
+package com.example.anyword.security.config;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,9 +14,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 @Configuration
-@EnableWebSecurity //Spring Security 활성화
+@EnableWebSecurity(debug=true) //Spring Security 활성화
 @EnableGlobalMethodSecurity(prePostEnabled = true) //인가 @PreAuthorize 어노테이션 사용 위해
 public class WebSecurityConfig {
+
 
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
@@ -32,11 +33,16 @@ public class WebSecurityConfig {
     return source;
   }
 
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
     httpSecurity
         .cors((cors) -> {})
-        .csrf(csrf -> csrf.disable()); //TODO: 임시
+        .csrf(csrf -> csrf.disable());//TODO: 임시
+//        .authorizeHttpRequests(auth -> auth
+//            .requestMatchers("/api/login").permitAll()
+//            .anyRequest().authenticated()
+//        );
 
 
 
