@@ -14,6 +14,9 @@ public class ResponseMessage {
   public static final String UNAUTHORIZED = "unauthorized";
   public static final String SESSION_EXPIRED = "session_expired";
 
+  //refresh
+  public static final String REISSUED_ACCESSTOKEN = "reissued_accesstoken";
+
   // 회원
   public static final String SIGNUP_SUCCESS = "signup_success";
   public static final String EMAIL_DUPLICATE = "email_duplicated";
