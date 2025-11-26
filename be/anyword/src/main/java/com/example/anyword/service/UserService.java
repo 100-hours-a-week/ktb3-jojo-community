@@ -76,10 +76,13 @@ public class UserService {
 
 
   public void saveRefreshTokenToCookie(String refreshToken, HttpServletResponse response){
+    try{
     Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
     refreshTokenCookie.setHttpOnly(true);
 
-    response.addCookie(refreshTokenCookie);
+    response.addCookie(refreshTokenCookie);} catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private HashMap<String, String> createToken(UserEntity user){
@@ -91,9 +94,19 @@ public class UserService {
         .atZone(ZoneId.systemDefault())
         .toLocalDateTime();
 
-    RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity(refreshToken, user, expireAt);
+    //기존
+    RefreshTokenEntity preToken = refreshTokenRepository.findByUserId(user.getId()).orElse(null);
 
-    refreshTokenRepository.save(refreshTokenEntity);
+    if (preToken == null){
+      //첫로그인
+      RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity(refreshToken, user, expireAt);
+      refreshTokenRepository.save(refreshTokenEntity);
+
+    }else{
+      //기존 로그인 덮어씌우기 (user 당 로그인 한번만 허용)
+      preToken.updateToken(refreshToken, expireAt);
+    }
+
 
     HashMap<String, String> returnValue = new HashMap<>();
 
@@ -106,7 +119,7 @@ public class UserService {
 
 
 
-  @Transactional(readOnly = true)
+  @Transactional
   public LoginResponseDto login(LoginRequestDto dto, HttpServletResponse response){
     UserEntity foundUser = userRepository.findByEmail(dto.getEmail()).orElseThrow(()->
         new BadRequestException(USER_NOT_FOUND));

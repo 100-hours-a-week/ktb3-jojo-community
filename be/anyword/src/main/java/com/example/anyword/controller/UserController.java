@@ -13,7 +13,6 @@ import com.example.anyword.dto.user.response.LoginResponseDto;
 import com.example.anyword.dto.user.response.UserResponseDto;
 import com.example.anyword.dto.user.request.PutUserRequestDto;
 import com.example.anyword.dto.user.response.SignupResponseDto;
-import com.example.anyword.shared.constants.Key;
 import com.example.anyword.dto.user.request.SignupRequestDto;
 import com.example.anyword.service.UserService;
 import com.example.anyword.shared.exception.SessionExpiredException;
@@ -56,12 +55,9 @@ public class UserController {
   public ResponseEntity<BaseResponseDto<LoginResponseDto>> login(
     @Valid
     @RequestBody LoginRequestDto request,
-      HttpSession session,
       HttpServletResponse response
   ){
     LoginResponseDto user = service.login(request, response);
-
-    session.setAttribute(Key.SESSION_USER_ID, user.getId());
 
     return ResponseEntity.ok(new BaseResponseDto<>(LOGIN_SUCCESS, user));
   }

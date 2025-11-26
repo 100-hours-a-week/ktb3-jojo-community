@@ -12,10 +12,11 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Entity
-@Getter
+@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshTokenEntity {
 
@@ -54,6 +55,14 @@ public class RefreshTokenEntity {
     this.createdAt = LocalDateTime.now();
     this.updatedAt = LocalDateTime.now();
   }
+
+  public void updateToken(String tokenHash, LocalDateTime expiresAt){
+    this.setTokenHash(tokenHash);
+    this.setUpdatedAt(LocalDateTime.now());
+    this.setExpiresAt(expiresAt);
+  }
+
+
 
 
 }

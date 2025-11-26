@@ -16,6 +16,8 @@ public class ResponseMessage {
 
   //refresh
   public static final String REISSUED_ACCESSTOKEN = "reissued_accesstoken";
+  public static final String ACCESSTOKEN_EXPIRED = "accesstoken_expired";
+  public static final String REFRESHTOKEN_EXPIRED = "refreshtoken_expired";
 
   // 회원
   public static final String SIGNUP_SUCCESS = "signup_success";

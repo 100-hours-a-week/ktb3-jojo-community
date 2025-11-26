@@ -77,7 +77,7 @@ public class JWTUtil {
   }
 
 
-  private Boolean validateToken(String token) {
+  public Boolean validateToken(String token) {
     try {
       Date exp = getExpirationTime(token);
 
