@@ -10,15 +10,24 @@ import com.example.anyword.dto.article.AuthorInfoDto;
 import com.example.anyword.dto.user.request.PutUserRequestDto;
 import com.example.anyword.dto.user.request.SignupRequestDto;
 import com.example.anyword.dto.user.request.LoginRequestDto;
+import com.example.anyword.dto.user.response.LoginResponseDto;
 import com.example.anyword.dto.user.response.UserResponseDto;
 import com.example.anyword.dto.user.response.SignupResponseDto;
+import com.example.anyword.entity.RefreshTokenEntity;
 import com.example.anyword.entity.UserEntity;
 import com.example.anyword.mapper.UserMapper;
+import com.example.anyword.repository.auth.RefreshTokenRepository;
 import com.example.anyword.repository.user.UserRepository;
+import com.example.anyword.security.JWTUtil;
 import com.example.anyword.shared.exception.BadRequestException;
 import com.example.anyword.shared.exception.ConflictException;
 import com.example.anyword.shared.exception.SessionExpiredException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.Objects;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +37,16 @@ public class UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
 
-  public UserService(UserRepository userRepository, UserMapper userMapper) {
+  //jwt 추가
+  private final JWTUtil jwtUtil;
+  private final RefreshTokenRepository refreshTokenRepository;
+
+  public UserService(UserRepository userRepository, UserMapper userMapper, JWTUtil jwtUtil,
+      RefreshTokenRepository refreshTokenRepository) {
     this.userRepository = userRepository;
     this.userMapper = userMapper;
+    this.jwtUtil = jwtUtil;
+    this.refreshTokenRepository = refreshTokenRepository;
   }
 
   /**
@@ -58,8 +74,40 @@ public class UserService {
   }
 
 
+
+  public void saveRefreshTokenToCookie(String refreshToken, HttpServletResponse response){
+    Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+    refreshTokenCookie.setHttpOnly(true);
+
+    response.addCookie(refreshTokenCookie);
+  }
+
+  private HashMap<String, String> createToken(UserEntity user){
+    String refreshToken = jwtUtil.createRefreshToken(user.getEmail());
+    String accessToken = jwtUtil.createRefreshToken(user.getEmail());
+
+    //Date -> LocalDateTime (Date - 레거시 but jjwt 때문에)
+    LocalDateTime expireAt = jwtUtil.getExpirationTime(refreshToken).toInstant()
+        .atZone(ZoneId.systemDefault())
+        .toLocalDateTime();
+
+    RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity(refreshToken, user, expireAt);
+
+    refreshTokenRepository.save(refreshTokenEntity);
+
+    HashMap<String, String> returnValue = new HashMap<>();
+
+    returnValue.put("at", accessToken);
+    returnValue.put("rt", refreshToken);
+
+    return returnValue;
+  }
+
+
+
+
   @Transactional(readOnly = true)
-  public UserResponseDto login(LoginRequestDto dto){
+  public LoginResponseDto login(LoginRequestDto dto, HttpServletResponse response){
     UserEntity foundUser = userRepository.findByEmail(dto.getEmail()).orElseThrow(()->
         new BadRequestException(USER_NOT_FOUND));
 
@@ -67,7 +115,11 @@ public class UserService {
       throw new BadRequestException(USER_NOT_FOUND);
     }
 
-    return userMapper.toUserResponseDto(foundUser);
+    HashMap<String, String> Tokens = createToken(foundUser);
+    saveRefreshTokenToCookie(Tokens.get("rt"), response);
+
+
+    return userMapper.toLoginResponseDto(foundUser, Tokens.get("at"));
   }
 
   private UserEntity getUserFromSession(HttpSession session){

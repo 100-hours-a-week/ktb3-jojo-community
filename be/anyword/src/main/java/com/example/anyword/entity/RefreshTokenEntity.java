@@ -46,5 +46,14 @@ public class RefreshTokenEntity {
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime updatedAt;
 
+  public RefreshTokenEntity(String tokenHash, UserEntity user, LocalDateTime expiresAt){
+    this.tokenHash = tokenHash;
+    this.user = user;
+    this.revoked = false;
+    this.expiresAt = expiresAt;
+    this.createdAt = LocalDateTime.now();
+    this.updatedAt = LocalDateTime.now();
+  }
+
 
 }

@@ -9,6 +9,7 @@ import static com.example.anyword.shared.constants.ResponseMessage.SUCCESS;
 import com.example.anyword.aop.Authable;
 import com.example.anyword.dto.BaseResponseDto;
 import com.example.anyword.dto.user.request.LoginRequestDto;
+import com.example.anyword.dto.user.response.LoginResponseDto;
 import com.example.anyword.dto.user.response.UserResponseDto;
 import com.example.anyword.dto.user.request.PutUserRequestDto;
 import com.example.anyword.dto.user.response.SignupResponseDto;
@@ -16,6 +17,7 @@ import com.example.anyword.shared.constants.Key;
 import com.example.anyword.dto.user.request.SignupRequestDto;
 import com.example.anyword.service.UserService;
 import com.example.anyword.shared.exception.SessionExpiredException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -51,12 +53,14 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<BaseResponseDto<UserResponseDto>> login(
+  public ResponseEntity<BaseResponseDto<LoginResponseDto>> login(
     @Valid
     @RequestBody LoginRequestDto request,
-      HttpSession session
+      HttpSession session,
+      HttpServletResponse response
   ){
-    UserResponseDto user = service.login(request);
+    LoginResponseDto user = service.login(request, response);
+
     session.setAttribute(Key.SESSION_USER_ID, user.getId());
 
     return ResponseEntity.ok(new BaseResponseDto<>(LOGIN_SUCCESS, user));

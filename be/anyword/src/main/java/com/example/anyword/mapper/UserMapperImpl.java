@@ -1,5 +1,6 @@
 package com.example.anyword.mapper;
 
+import com.example.anyword.dto.user.response.LoginResponseDto;
 import com.example.anyword.dto.user.response.SignupResponseDto;
 import com.example.anyword.dto.user.response.UserResponseDto;
 import com.example.anyword.entity.UserEntity;
@@ -18,6 +19,19 @@ public class UserMapperImpl implements UserMapper {
         user.getProfileImageUrl()
     );
   }
+
+  @Override
+  public LoginResponseDto toLoginResponseDto(UserEntity user, String accessToken) {
+    if (user == null) return null;
+    return new LoginResponseDto(
+        user.getId(),
+        user.getEmail(),
+        user.getNickname(),
+        user.getProfileImageUrl(),
+        accessToken
+    );
+  }
+
 
   @Override
   public SignupResponseDto toSignupResponseDto(UserEntity user) {

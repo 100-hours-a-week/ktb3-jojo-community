@@ -70,12 +70,16 @@ public class JWTUtil {
         .getPayload();
   }
 
+  public Date getExpirationTime(String token){
+    Claims claims = parseClaims(token); //파싱
+
+    return claims.getExpiration();
+  }
+
 
   private Boolean validateToken(String token) {
     try {
-      Claims claims = parseClaims(token); //파싱
-
-      Date exp = claims.getExpiration();
+      Date exp = getExpirationTime(token);
 
       return exp != null && exp.after(new Date());
     } catch (JwtException | IllegalArgumentException e) {
