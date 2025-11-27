@@ -39,7 +39,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 
     //accessToken 꺼내기
-    String authHeader = request.getHeader("Authorization");
+    String authHeader = request.getHeader("authorization");
 
     if(authHeader == null || !authHeader.startsWith("Bearer")){
       //토큰 없음 처리
@@ -61,7 +61,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     UserDetails userDetail = userDetailsService.loadUserByUsername(email); //username -> email 사용
 
     //authentication 객체 생성
-    Authentication authentication = new UsernamePasswordAuthenticationToken(userDetail, null); // principal - email / credentails - password
+    Authentication authentication = new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities()); // principal - email / credentails - password
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     filterChain.doFilter(request, response);
