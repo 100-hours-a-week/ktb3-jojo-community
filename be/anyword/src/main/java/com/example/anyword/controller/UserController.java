@@ -2,11 +2,10 @@ package com.example.anyword.controller;
 
 import static com.example.anyword.shared.constants.ResponseMessage.LOGIN_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.LOGOUT_SUCCESS;
-import static com.example.anyword.shared.constants.ResponseMessage.SESSION_EXPIRED;
 import static com.example.anyword.shared.constants.ResponseMessage.SIGNUP_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.SUCCESS;
+import static com.example.anyword.shared.constants.ResponseMessage.UNAUTHORIZED;
 
-import com.example.anyword.aop.Authable;
 import com.example.anyword.dto.BaseResponseDto;
 import com.example.anyword.dto.user.request.LoginRequestDto;
 import com.example.anyword.dto.user.response.LoginResponseDto;
@@ -14,13 +13,14 @@ import com.example.anyword.dto.user.response.UserResponseDto;
 import com.example.anyword.dto.user.request.PutUserRequestDto;
 import com.example.anyword.dto.user.response.SignupResponseDto;
 import com.example.anyword.dto.user.request.SignupRequestDto;
+import com.example.anyword.security.CustomUserDetails;
 import com.example.anyword.service.UserService;
-import com.example.anyword.shared.exception.SessionExpiredException;
+import com.example.anyword.shared.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.net.URI;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,38 +62,37 @@ public class UserController {
     return ResponseEntity.ok(new BaseResponseDto<>(LOGIN_SUCCESS, user));
   }
 
-  @Authable
+
   @GetMapping("/current")
-  public ResponseEntity<BaseResponseDto<UserResponseDto>> currentUser(HttpSession session){
-    UserResponseDto user = service.getCurrentUser(session);
+  public ResponseEntity<BaseResponseDto<UserResponseDto>> currentUser(@AuthenticationPrincipal CustomUserDetails userDetails){
+    UserResponseDto user = service.getCurrentUser(userDetails.getUser());
 
     return ResponseEntity.ok(new BaseResponseDto<>(SUCCESS, user));
   }
 
-  @Authable
+
   @PutMapping("/current")
   public ResponseEntity<BaseResponseDto<UserResponseDto>> patchUserInfo(@Valid @RequestBody PutUserRequestDto request,
-      HttpSession session){
-    UserResponseDto updatedUser = service.putUser(session, request);
+      @AuthenticationPrincipal CustomUserDetails userDetails){
+    UserResponseDto updatedUser = service.putUser(userDetails.getUser(), request);
 
     return ResponseEntity.ok(new BaseResponseDto<>(SUCCESS, updatedUser));
   }
 
-  @Authable
+
   @PostMapping("/current/logout")
-  public ResponseEntity<?> logout(HttpSession session){
+  public ResponseEntity<?> logout(@AuthenticationPrincipal CustomUserDetails userDetails){
     try{
-      session.invalidate();
+      service.logout(userDetails.getUser());
     } catch (Exception e) {
-      throw new SessionExpiredException(SESSION_EXPIRED);
+      throw new UnauthorizedException(UNAUTHORIZED);
     }
     return ResponseEntity.ok(new BaseResponseDto<>(LOGOUT_SUCCESS));
   }
 
-  @Authable
   @DeleteMapping("/current/signout")
-  public ResponseEntity<?> signOut(HttpSession session){
-    service.signout(session);
+  public ResponseEntity<?> signOut(@AuthenticationPrincipal CustomUserDetails userDetails){
+    service.signout(userDetails.getUser());
 
     return ResponseEntity.noContent().build();
   }

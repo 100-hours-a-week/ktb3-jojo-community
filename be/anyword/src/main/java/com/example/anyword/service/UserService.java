@@ -135,6 +135,10 @@ public class UserService {
     return userMapper.toLoginResponseDto(foundUser, Tokens.get("at"));
   }
 
+  public void logout(UserEntity user){
+    user.getRefreshToken().logout();
+  }
+
   private UserEntity getUserFromSession(HttpSession session){
     Long userId = (Long) session.getAttribute(SESSION_USER_ID);
 
@@ -142,9 +146,8 @@ public class UserService {
         new SessionExpiredException(SESSION_EXPIRED));
   }
 
-  public UserResponseDto getCurrentUser(HttpSession session){
-    UserEntity current = this.getUserFromSession(session);
-    return userMapper.toUserResponseDto(current);
+  public UserResponseDto getCurrentUser(UserEntity user){
+    return userMapper.toUserResponseDto(user);
   }
 
   /**
@@ -161,8 +164,7 @@ public class UserService {
 
 
   @Transactional
-  public UserResponseDto putUser(HttpSession session, PutUserRequestDto request){
-    UserEntity original = this.getUserFromSession(session);
+  public UserResponseDto putUser(UserEntity original, PutUserRequestDto request){
 
     String newEmail = merge(request.getEmail(), original.getEmail());
     String newNickname = merge(request.getNickname(), original.getNickname());
@@ -184,11 +186,9 @@ public class UserService {
 
 
   @Transactional
-  public void signout(HttpSession session){
-    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
+  public void signout(UserEntity user){
+    Long userId = user.getId();
     userRepository.deleteById(userId);
-
-    session.invalidate();
   }
 
   @Transactional(readOnly = true)
