@@ -1,12 +1,11 @@
 package com.example.anyword.controller;
 
-import static com.example.anyword.shared.constants.Key.SESSION_USER_ID;
+
 import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_CREATE_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_GET_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.ARTICLE_UPDATE_SUCCESS;
 import static com.example.anyword.shared.constants.ResponseMessage.SUCCESS;
 
-import com.example.anyword.aop.Authable;
 import com.example.anyword.dto.BaseResponseDto;
 import com.example.anyword.dto.article.response.GetArticleListResponseDto;
 import com.example.anyword.dto.article.response.GetArticleResponseDto;
@@ -14,10 +13,11 @@ import com.example.anyword.dto.article.request.PostArticleRequestDto;
 import com.example.anyword.dto.article.response.PostArticleResponseDto;
 import com.example.anyword.dto.article.request.PutArticleRequestDto;
 import com.example.anyword.dto.article.response.PutArticleResponseDto;
+import com.example.anyword.security.CustomUserDetails;
 import com.example.anyword.service.ArticleService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,11 +41,11 @@ public class ArticleController {
     this.articleService = articleService;
   }
 
-  @Authable
+
   @PostMapping
   public ResponseEntity<BaseResponseDto<PostArticleResponseDto>> createArticle(
-      @Valid @RequestBody PostArticleRequestDto request, HttpSession session){
-    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
+      @Valid @RequestBody PostArticleRequestDto request, @AuthenticationPrincipal CustomUserDetails userDetails){
+    Long userId = userDetails.getUser().getId();
     PostArticleResponseDto response = articleService.createArticle(userId, request);
 
 
@@ -54,10 +54,10 @@ public class ArticleController {
 
   @GetMapping("/{articleId}")
   public ResponseEntity<BaseResponseDto<GetArticleResponseDto>> getArticle(
-      HttpSession session,
+      @AuthenticationPrincipal CustomUserDetails userDetails,
       @PathVariable Long articleId) {
 
-    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
+    Long userId = userDetails.getUser().getId();
     GetArticleResponseDto data = articleService.getArticle(articleId, userId);
 
     return ResponseEntity.ok(new BaseResponseDto<>(ARTICLE_GET_SUCCESS, data));
@@ -81,25 +81,25 @@ public class ArticleController {
     return ResponseEntity.ok(new BaseResponseDto<>(SUCCESS, data));
   }
 
-  @Authable
+
   @PutMapping("/{articleId}")
   public ResponseEntity<BaseResponseDto<PutArticleResponseDto>> putArticle(
       @Valid @RequestBody PutArticleRequestDto request,
-      HttpSession session,
+      @AuthenticationPrincipal CustomUserDetails userDetails,
       @PathVariable Long articleId){
-    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
+    Long userId = userDetails.getUser().getId();
     PutArticleResponseDto response = articleService.putArticle(userId, articleId, request);
 
     return ResponseEntity.ok(new BaseResponseDto<>(ARTICLE_UPDATE_SUCCESS, response));
   }
 
-  @Authable
+
   @DeleteMapping("/{articleId}")
   public ResponseEntity<?> deleteArticle(
-      HttpSession session,
+      @AuthenticationPrincipal CustomUserDetails userDetails,
       @PathVariable Long articleId) {
 
-    Long userId = (Long) session.getAttribute(SESSION_USER_ID);
+    Long userId = userDetails.getUser().getId();
     articleService.deleteArticle(userId, articleId);
 
     return ResponseEntity.noContent().build();
