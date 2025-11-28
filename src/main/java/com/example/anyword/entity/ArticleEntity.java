@@ -1,5 +1,8 @@
 package com.example.anyword.entity;
 
+import static com.example.anyword.shared.constants.ValidErrorMessage.NO_TITLE_OR_CONTENTS;
+
+import com.example.anyword.shared.exception.BadRequestException;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -62,10 +65,28 @@ public class ArticleEntity implements BaseEntity<Long> {
     this.updatedAt = LocalDateTime.now();
   }
 
-  //TODO: setter 사용이 최선?
-  public ArticleEntity copyWith(String newTitle, String newContent) {
-    this.setTitle(newTitle);
-    this.setContents(newContent);
+  private void updateTitle(String newTitle){
+    if (newTitle == null || newTitle.isEmpty()){
+      System.out.println("merge 와 함께 사용해주세요."); // 개발 로그
+      throw new BadRequestException(NO_TITLE_OR_CONTENTS);
+    }
+    this.title = newTitle;
+  }
+
+  private void updateContent(String newContent){
+    if (newContent == null || newContent.isEmpty()){
+      System.out.println("merge 와 함께 사용해주세요."); // 개발 로그
+      throw new BadRequestException(NO_TITLE_OR_CONTENTS);
+    }
+    this.contents = newContent;
+  }
+
+
+
+  //setter 사용 -> 의미 명확한 메서드로 변경
+  public ArticleEntity returnUpdatedArticle(String newTitle, String newContent) {
+    this.updateTitle(newTitle);
+    this.updateContent(newContent);
 
     return this;
   }
