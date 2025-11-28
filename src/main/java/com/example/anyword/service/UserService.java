@@ -22,13 +22,13 @@ import com.example.anyword.security.JWTUtil;
 import com.example.anyword.shared.exception.BadRequestException;
 import com.example.anyword.shared.exception.ConflictException;
 import com.example.anyword.shared.exception.SessionExpiredException;
+import com.example.anyword.shared.utils.ValidateUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
-import java.util.Objects;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -170,13 +170,9 @@ public class UserService {
     String newNickname = merge(request.getNickname(), original.getNickname());
     String newProfile = merge(request.getProfileImageUrl(), original.getProfileImageUrl());
     String newPassword = merge(request.getPassword(), original.getPassword());
-    if (!Objects.requireNonNull(newEmail).equals(original.getEmail()) && userRepository.existsByEmail(newEmail)) {
-      throw new ConflictException(EMAIL_DUPLICATE);
-    }
 
-    if (!Objects.requireNonNull(newNickname).equals(original.getNickname()) && userRepository.existsByNickname(newNickname)) {
-      throw new ConflictException(NICKNAME_DUPLICATE);
-    }
+    ValidateUtil.validateDuplicateField(newEmail, original.getEmail(), userRepository::existsByEmail, EMAIL_DUPLICATE);
+    ValidateUtil.validateDuplicateField(newNickname, original.getNickname(), userRepository::existsByNickname, NICKNAME_DUPLICATE);
 
     UserEntity updated = original.returnUpdatedUser(newEmail, newPassword, newNickname, newProfile);
     userRepository.save(updated);
