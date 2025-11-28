@@ -74,7 +74,7 @@ public class CommentService {
     Long authorId = comment.getAuthor().getId();
     checkUserIdwithAuthorId(userId, authorId);
 
-    CommentEntity updated = CommentEntity.copyWith(comment, request.getContent());
+    CommentEntity updated = comment.returnUpdatedComment(request.getContent());
     CommentEntity saved = commentRepository.save(updated);
 
     return commentMapper.toResponse(saved);

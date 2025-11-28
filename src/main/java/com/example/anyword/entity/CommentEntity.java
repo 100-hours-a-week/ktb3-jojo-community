@@ -1,5 +1,8 @@
 package com.example.anyword.entity;
 
+import static com.example.anyword.shared.constants.ValidErrorMessage.NO_TITLE_OR_CONTENTS;
+
+import com.example.anyword.shared.exception.BadRequestException;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,28 +22,28 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class CommentEntity implements BaseEntity<Long> {
-  @Id @Setter
+public class CommentEntity {
+  @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(unique = true, nullable = false)
   private Long id; //PK
 
   @ManyToOne
-  @JoinColumn(name="article_id", nullable = false) @Setter
+  @JoinColumn(name="article_id", nullable = false)
   private ArticleEntity article; //FK
 
   @ManyToOne
-  @JoinColumn(name="user_id", nullable = false) @Setter
+  @JoinColumn(name="user_id", nullable = false)
   private UserEntity author; //FK2
 
-  @Column(nullable = false) @Setter
+  @Column(nullable = false)
   private String contents;
 
   @Column(nullable = false)
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
 
-  @Column(nullable = false) @Setter
+  @Column(nullable = false)
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime updatedAt;
 
@@ -62,15 +65,19 @@ public class CommentEntity implements BaseEntity<Long> {
     this.updatedAt = updatedAt;
   }
 
-  public static CommentEntity copyWith(CommentEntity original, String newContent){
-    return new CommentEntity(
-        original.getId(),
-        original.getArticle(),
-        original.getAuthor(),
-        newContent,
-        original.getCreatedAt(),
-        LocalDateTime.now()
-    );
+  private void updateContent(String newContent){
+    if (newContent == null || newContent.isEmpty()){
+      System.out.println("merge 와 함께 사용해주세요."); // 개발 로그
+      throw new BadRequestException(NO_TITLE_OR_CONTENTS);
+    }
+    this.contents = newContent;
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  // setter 사용 -> 의미 명확한 메서드로 변경
+  public CommentEntity returnUpdatedComment(String newContent) {
+    this.updateContent(newContent);
+    return this;
   }
 
 }
