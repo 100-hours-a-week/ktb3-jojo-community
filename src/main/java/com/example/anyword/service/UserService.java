@@ -178,7 +178,7 @@ public class UserService {
       throw new ConflictException(NICKNAME_DUPLICATE);
     }
 
-    UserEntity updated = original.copyWith(newEmail, newPassword, newNickname, newProfile);
+    UserEntity updated = original.returnUpdatedUser(newEmail, newPassword, newNickname, newProfile);
 
 
     return userMapper.toUserResponseDto(updated);

@@ -12,13 +12,12 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ArticleImageEntity implements BaseEntity<Long> {
-  @Id @Setter
+public class ArticleImageEntity {
+  @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(unique = true, nullable = false)
   private Long id; //PK
@@ -27,10 +26,10 @@ public class ArticleImageEntity implements BaseEntity<Long> {
   @JoinColumn(name="article_id", nullable = false)
   private ArticleEntity article;
 
-  @Column(name="image_url", columnDefinition = "TEXT", nullable = false) @Setter
+  @Column(name="image_url", columnDefinition = "TEXT", nullable = false)
   private String imageURL;
 
-  @Column(nullable = false) @Setter
+  @Column(nullable = false)
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
 

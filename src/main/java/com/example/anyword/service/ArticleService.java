@@ -91,7 +91,7 @@ public class ArticleService {
     String newTitle = merge(request.getTitle(), article.getTitle());
     String newContent = merge(request.getContents(), article.getContents());
 
-    ArticleEntity updated = article.copyWith(newTitle, newContent);
+    ArticleEntity updated = article.returnUpdatedArticle(newTitle, newContent);
     ArticleEntity saved = articleRepository.save(updated);
 
     if (request.getImageUrls()!=null) {

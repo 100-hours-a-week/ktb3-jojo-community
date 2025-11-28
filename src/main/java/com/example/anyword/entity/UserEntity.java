@@ -1,5 +1,8 @@
 package com.example.anyword.entity;
 
+import static com.example.anyword.shared.constants.ValidErrorMessage.NICKNAME_TOO_LONG;
+
+import com.example.anyword.shared.exception.BadRequestException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,13 +15,12 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 
 @Entity
-@Getter @Setter
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserEntity implements BaseEntity<Long> {
+public class UserEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(unique = true, nullable = false)
@@ -58,18 +60,52 @@ public class UserEntity implements BaseEntity<Long> {
     this.profileImageUrl = profileImageUrl;
   }
 
-  //setter 사용 x, patch
-  public UserEntity copyWith(
+  private void updateEmailIfProvided(String email) {
+    if (email == null || email.isEmpty()) {
+      return; // PATCH → null이면 변경 안 함
+    }
+    // TODO: 이메일 형식 검증 등 추가 가능
+    this.email = email;
+  }
+
+  private void updatePasswordIfProvided(String password) {
+    if (password == null || password.isEmpty()) {
+      return;
+    }
+
+    this.password = password;
+  }
+
+  private void updateNicknameIfProvided(String nickname) {
+    if (nickname == null || nickname.isEmpty()) {
+      return;
+    }
+
+    if (nickname.length() > 10){
+      throw new BadRequestException(NICKNAME_TOO_LONG);
+    }
+
+    this.nickname = nickname;
+  }
+
+  private void updateProfileImageUrlIfProvided(String profileImageUrl) {
+    if (profileImageUrl == null || profileImageUrl.isEmpty()) {
+      return;
+    }
+    this.profileImageUrl = profileImageUrl;
+  }
+
+  // setter 사용 x, 의미 있는 메서드
+  public UserEntity returnUpdatedUser(
       String email,
       String password,
       String nickname,
-      String profileImageUrl) {
-
-    //TODO: setter 사용이 최선인가 ..
-    this.setEmail(email != null ? email : this.email);
-    this.setPassword(password != null ? password : this.password);
-    this.setNickname(nickname != null ? nickname : this.nickname);
-    this. setProfileImageUrl(profileImageUrl != null ? profileImageUrl : this.profileImageUrl);
+      String profileImageUrl
+  ) {
+    this.updateEmailIfProvided(email);
+    this.updatePasswordIfProvided(password);
+    this.updateNicknameIfProvided(nickname);
+    this.updateProfileImageUrlIfProvided(profileImageUrl);
 
     return this;
   }

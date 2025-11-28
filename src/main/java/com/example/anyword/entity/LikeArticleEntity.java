@@ -12,23 +12,22 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LikeArticleEntity implements BaseEntity<Long> {
-  @Id @Setter
+public class LikeArticleEntity {
+  @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(unique = true, nullable = false)
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name="article_id", nullable = false) @Setter
+  @JoinColumn(name="article_id", nullable = false)
   private ArticleEntity article; //FK
 
   @ManyToOne
-  @JoinColumn(name="user_id", nullable = false) @Setter
+  @JoinColumn(name="user_id", nullable = false)
   private UserEntity author; //FK2
 
   @Column(nullable = false)

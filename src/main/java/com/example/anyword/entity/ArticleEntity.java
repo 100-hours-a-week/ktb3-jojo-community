@@ -19,36 +19,35 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ArticleEntity implements BaseEntity<Long> {
-  @Id @Setter @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ArticleEntity {
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(unique = true, nullable = false)
   private Long id; //PK
 
   @ManyToOne
-  @JoinColumn(name="user_id", nullable = false) @Setter
+  @JoinColumn(name="user_id", nullable = false)
   private UserEntity author; //FK
 
-  @Column(nullable = false) @Setter
+  @Column(nullable = false)
   private String title;
 
-  @Column(nullable = false, columnDefinition = "TEXT") @Setter
+  @Column(nullable = false, columnDefinition = "TEXT")
   private String contents;
 
-  @Column(nullable = false) @Setter
+  @Column(nullable = false)
   private long viewCnt;
 
   @Column(nullable = false)
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime createdAt;
 
-  @Column(nullable = false) @Setter
+  @Column(nullable = false)
   @JsonFormat(timezone = "Asia/Seoul")
   private LocalDateTime updatedAt;
 

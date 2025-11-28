@@ -1,5 +1,9 @@
 package com.example.anyword.entity;
 
+import static com.example.anyword.shared.constants.ValidErrorMessage.EMPTY_TOKEN;
+import static com.example.anyword.shared.constants.ValidErrorMessage.INVALID_EXPIRED_TIME;
+
+import com.example.anyword.shared.exception.BadRequestException;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,11 +16,10 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 
 @Entity
-@Getter @Setter
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshTokenEntity {
 
@@ -56,15 +59,35 @@ public class RefreshTokenEntity {
     this.updatedAt = LocalDateTime.now();
   }
 
+  private void updateTokenHash(String tokenHash) {
+    if (tokenHash == null || tokenHash.isBlank()) {
+      throw new BadRequestException(INVALID_EXPIRED_TIME);
+    }
+    this.tokenHash = tokenHash;
+  }
+
+  private void updateExpiresAt(LocalDateTime expiresAt) {
+    if (expiresAt == null || expiresAt.isBefore(LocalDateTime.now())) {
+      throw new BadRequestException(EMPTY_TOKEN);
+    }
+    this.expiresAt = expiresAt;
+  }
+
+  private void touchUpdatedAt() {
+    this.updatedAt = LocalDateTime.now();
+  }
+
+
+
   public void updateToken(String tokenHash, LocalDateTime expiresAt){
-    this.setTokenHash(tokenHash);
-    this.setUpdatedAt(LocalDateTime.now());
-    this.setExpiresAt(expiresAt);
+    this.updateTokenHash(tokenHash);
+    this.updateExpiresAt(expiresAt);
+    this.touchUpdatedAt();
   }
 
 
   public void logout(){
-    this.setRevoked(true);
+    this.revoked = true;
   }
 
 
