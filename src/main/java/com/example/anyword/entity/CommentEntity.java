@@ -6,6 +6,7 @@ import com.example.anyword.shared.exception.BadRequestException;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,11 +28,11 @@ public class CommentEntity {
   @Column(unique = true, nullable = false)
   private Long id; //PK
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name="article_id", nullable = false)
   private ArticleEntity article; //FK
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name="user_id", nullable = false)
   private UserEntity author; //FK2
 
