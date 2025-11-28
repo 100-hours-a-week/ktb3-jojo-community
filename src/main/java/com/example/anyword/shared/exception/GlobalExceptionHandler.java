@@ -1,6 +1,6 @@
 package com.example.anyword.shared.exception;
 
-import com.example.anyword.dto.BaseResponseDto;
+import com.example.anyword.shared.dto.BaseResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

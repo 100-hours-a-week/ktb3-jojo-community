@@ -1,6 +1,6 @@
 package com.example.anyword.security.config;
 
-import com.example.anyword.security.JwtAuthFilter;
+import com.example.anyword.security.customFilter.JwtAuthFilter;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

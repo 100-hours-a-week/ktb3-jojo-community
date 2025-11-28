@@ -1,5 +1,6 @@
 package com.example.anyword.entity;
 
+import com.example.anyword.User.entity.UserEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;

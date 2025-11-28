@@ -1,6 +1,8 @@
 package com.example.anyword.entity;
 
 
+import com.example.anyword.Article.entity.ArticleEntity;
+import com.example.anyword.User.entity.UserEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
