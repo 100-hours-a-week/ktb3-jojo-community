@@ -179,6 +179,7 @@ public class UserService {
     }
 
     UserEntity updated = original.returnUpdatedUser(newEmail, newPassword, newNickname, newProfile);
+    userRepository.save(updated);
 
 
     return userMapper.toUserResponseDto(updated);
