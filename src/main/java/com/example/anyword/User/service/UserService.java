@@ -7,6 +7,9 @@ import static com.example.anyword.shared.constants.ResponseMessage.SESSION_EXPIR
 import static com.example.anyword.shared.constants.ResponseMessage.USER_NOT_FOUND;
 
 import com.example.anyword.Article.dto.AuthorInfoDto;
+import com.example.anyword.Article.repository.ArticleRepository;
+import com.example.anyword.Comment.repository.CommentRepository;
+import com.example.anyword.LikeArticle.repository.LikeArticleRepository;
 import com.example.anyword.User.dto.request.PutUserRequestDto;
 import com.example.anyword.User.dto.request.SignupRequestDto;
 import com.example.anyword.User.dto.request.LoginRequestDto;
@@ -29,6 +32,7 @@ import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,12 +45,21 @@ public class UserService {
   private final JWTUtil jwtUtil;
   private final RefreshTokenRepository refreshTokenRepository;
 
+  //회원 탈퇴 시 연관 데이터 삭제를 위한 Repository
+  private final ArticleRepository articleRepository;
+  private final CommentRepository commentRepository;
+  private final LikeArticleRepository likeArticleRepository;
+
   public UserService(UserRepository userRepository, UserMapper userMapper, JWTUtil jwtUtil,
-      RefreshTokenRepository refreshTokenRepository) {
+      RefreshTokenRepository refreshTokenRepository, ArticleRepository articleRepository,
+      CommentRepository commentRepository, LikeArticleRepository likeArticleRepository) {
     this.userRepository = userRepository;
     this.userMapper = userMapper;
     this.jwtUtil = jwtUtil;
     this.refreshTokenRepository = refreshTokenRepository;
+    this.articleRepository = articleRepository;
+    this.commentRepository = commentRepository;
+    this.likeArticleRepository = likeArticleRepository;
   }
 
   /**
@@ -185,6 +198,26 @@ public class UserService {
   @Transactional
   public void signout(UserEntity user){
     Long userId = user.getId();
+
+    //Lazy Loading 회피
+    List<Long> articleIds = articleRepository.findAllIdsByAuthorId(userId);
+
+    if (!articleIds.isEmpty()) {
+      likeArticleRepository.deleteAllByArticleIdIn(articleIds);
+    }
+
+    likeArticleRepository.deleteAllByAuthorId(userId);
+
+    if (!articleIds.isEmpty()) {
+      commentRepository.deleteAllByArticleIdIn(articleIds);
+    }
+
+    commentRepository.deleteAllByAuthorId(userId);
+
+    articleRepository.deleteAllByAuthorId(userId);
+
+    refreshTokenRepository.findByUserId(userId).ifPresent(refreshTokenRepository::delete);
+
     userRepository.deleteById(userId);
   }
 

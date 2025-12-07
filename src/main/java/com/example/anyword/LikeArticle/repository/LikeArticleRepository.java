@@ -26,4 +26,14 @@ public interface LikeArticleRepository extends JpaRepository<LikeArticleEntity, 
   @Modifying
   @Query("delete from LikeArticleEntity l where l.article.id = :articleId and l.author.id  = :authorId")
   int deleteByIds(@Param("articleId") Long articleId, @Param("authorId")  Long authorId);
+
+  /** 특정 유저가 누른 모든 좋아요 삭제 */
+  @Modifying
+  @Query("delete from LikeArticleEntity l where l.author.id = :authorId")
+  void deleteAllByAuthorId(@Param("authorId") Long authorId);
+
+  /** 특정 게시글들의 모든 좋아요 삭제 */
+  @Modifying
+  @Query("delete from LikeArticleEntity l where l.article.id in :articleIds")
+  void deleteAllByArticleIdIn(@Param("articleIds") List<Long> articleIds);
 }
