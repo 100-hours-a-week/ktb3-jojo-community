@@ -38,7 +38,7 @@ public class LikeController {
   }
 
 
-  @Authable
+
   @DeleteMapping("/{articleId}")
   public ResponseEntity<BaseResponseDto<?>> removeLike(@AuthenticationPrincipal CustomUserDetails userDetails,
       @PathVariable Long articleId){
