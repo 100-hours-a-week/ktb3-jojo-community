@@ -30,7 +30,7 @@ public class ArticleUtils {
    * 정렬 방식 검증
    */
   public static String validateSort(String sort) {
-    if (sort == null || (!sort.equals("latest") && !sort.equals("popular"))) {
+    if (sort == null || (!sort.equals(PageConstants.SORT_LATEST) && !sort.equals(PageConstants.SORT_POPULARITY))) {
       return PageConstants.SORT_LATEST;
     }
     return sort;
